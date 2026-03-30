@@ -6,16 +6,18 @@ const PORT = process.env.PORT || 3000;
 
 let gameState = {
   room: null,
-  teams: [{ name: 'Team 1', score: 0, pos: 0 }, { name: 'Team 2', score: 0, pos: 0 }],
-  settings: { timer: 60, spaces: 30, skips: 3, move: 1 },
-  gs: { turn: 0, phase: 'idle', skipsLeft: 3 },
+  phase: 'lobby', // 'lobby' | 'active' | 'done'
+  teams: [],      // { name, score, pos, connected }
+  settings: { timer: 60, spaces: 30 },
+  gs: { turn: 0, phase: 'waiting' }, // gs.phase: 'waiting' | 'playing'
   currentCard: null,
-  timestamp: Date.now(),
+  timestamp: null,
   deckSize: 0
 };
 
 let cards = [];
 let deck = [];
+let turnHistory = []; // [{ turn, teams: [{score,pos},...] }]
 const sseClients = new Set();
 
 function shuffle(arr) {
@@ -35,7 +37,6 @@ function broadcast(data) {
 }
 
 function pushState() {
-  gameState.timestamp = Date.now();
   gameState.deckSize = deck.length;
   broadcast({ type: 'state', payload: gameState });
 }
@@ -70,6 +71,16 @@ function json(res, data, status = 200) {
   res.end(JSON.stringify(data));
 }
 
+function drawCard() {
+  if (!deck.length) deck = shuffle(cards);
+  if (!deck.length) return null;
+  return deck.pop();
+}
+
+function snapshotTeams() {
+  return gameState.teams.map(t => ({ score: t.score, pos: t.pos }));
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost`);
   const p = url.pathname;
@@ -80,6 +91,7 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
+  // SSE
   if (p === '/events') {
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
@@ -89,8 +101,8 @@ const server = http.createServer(async (req, res) => {
     });
     res.write(`data: ${JSON.stringify({ type: 'state', payload: { ...gameState, deckSize: deck.length } })}\n\n`);
     sseClients.add(res);
-    const keepAlive = setInterval(() => { try { res.write(': ping\n\n'); } catch { clearInterval(keepAlive); sseClients.delete(res); } }, 20000);
-    req.on('close', () => { clearInterval(keepAlive); sseClients.delete(res); });
+    const ka = setInterval(() => { try { res.write(': ping\n\n'); } catch { clearInterval(ka); sseClients.delete(res); } }, 20000);
+    req.on('close', () => { clearInterval(ka); sseClients.delete(res); });
     return;
   }
 
@@ -98,108 +110,191 @@ const server = http.createServer(async (req, res) => {
     return json(res, { ...gameState, deckSize: deck.length });
   }
 
+  // Create room — resets lobby, keeps cards & settings
   if (p === '/api/create-room' && req.method === 'POST') {
-    gameState.room = genCode();
+    gameState = {
+      room: genCode(),
+      phase: 'lobby',
+      teams: [],
+      settings: { ...gameState.settings },
+      gs: { turn: 0, phase: 'waiting' },
+      currentCard: null,
+      timestamp: null,
+      deckSize: deck.length
+    };
+    turnHistory = [];
     pushState();
     return json(res, { room: gameState.room });
   }
 
-  if (p === '/api/setup' && req.method === 'POST') {
-    const body = await readBody(req);
-    if (body.teams) gameState.teams = body.teams;
-    if (body.settings) gameState.settings = body.settings;
-    gameState.gs = { turn: 0, phase: 'idle', skipsLeft: parseInt(gameState.settings.skips) };
+  // Join or create team
+  if (p === '/api/join-team' && req.method === 'POST') {
+    const { name } = await readBody(req);
+    if (!name || !name.trim()) return json(res, { error: 'Name required' }, 400);
+    if (!gameState.room) return json(res, { error: 'No room open' }, 400);
+
+    const trimmed = name.trim();
+
+    if (gameState.phase === 'lobby') {
+      if (gameState.teams.length >= 6) return json(res, { error: 'Max 6 teams' }, 400);
+      // Prevent duplicate names
+      if (gameState.teams.some(t => t.name.toLowerCase() === trimmed.toLowerCase())) {
+        return json(res, { error: 'Team name taken' }, 400);
+      }
+      const idx = gameState.teams.length;
+      gameState.teams.push({ name: trimmed, score: 0, pos: 0, connected: true });
+      pushState();
+      return json(res, { ok: true, teamIdx: idx, teamName: trimmed });
+    }
+
+    if (gameState.phase === 'active' || gameState.phase === 'done') {
+      const idx = gameState.teams.findIndex(t => t.name.toLowerCase() === trimmed.toLowerCase());
+      if (idx < 0) return json(res, { error: 'Team not found — game already started' }, 404);
+      gameState.teams[idx].connected = true;
+      pushState();
+      return json(res, { ok: true, teamIdx: idx, teamName: gameState.teams[idx].name });
+    }
+
+    return json(res, { error: 'Cannot join' }, 400);
+  }
+
+  // Host: start game
+  if (p === '/api/start-game' && req.method === 'POST') {
+    if (gameState.phase !== 'lobby') return json(res, { error: 'Not in lobby' }, 400);
+    if (gameState.teams.length < 2) return json(res, { error: 'Need at least 2 teams' }, 400);
+    gameState.phase = 'active';
+    gameState.gs = { turn: 0, phase: 'waiting' };
     gameState.currentCard = null;
+    gameState.timestamp = null;
     deck = shuffle(cards);
+    turnHistory = [];
     pushState();
     return json(res, { ok: true });
   }
 
-  if (p === '/api/cards' && req.method === 'GET') {
-    return json(res, cards);
+  // Team: draw a card (starts their turn timer)
+  if (p === '/api/new-card' && req.method === 'POST') {
+    if (gameState.phase !== 'active') return json(res, { error: 'Game not active' }, 400);
+    if (gameState.gs.phase !== 'waiting') return json(res, { error: 'Card already active' }, 400);
+    const card = drawCard();
+    if (!card) return json(res, { error: 'No cards' }, 400);
+    gameState.currentCard = card;
+    gameState.gs.phase = 'playing';
+    gameState.timestamp = Date.now();
+    pushState();
+    return json(res, { ok: true });
   }
 
+  // Team: correct answer — score, advance, auto-draw next card
+  if (p === '/api/correct' && req.method === 'POST') {
+    if (gameState.phase !== 'active') return json(res, { error: 'Game not active' }, 400);
+    const t = gameState.gs.turn;
+    gameState.teams[t].score++;
+    gameState.teams[t].pos = Math.min(gameState.teams[t].pos + 1, parseInt(gameState.settings.spaces));
+
+    if (gameState.teams[t].pos >= parseInt(gameState.settings.spaces)) {
+      gameState.phase = 'done';
+      gameState.currentCard = null;
+      gameState.gs.phase = 'waiting';
+      pushState();
+      return json(res, { ok: true, winner: gameState.teams[t].name });
+    }
+
+    const card = drawCard();
+    if (card) {
+      gameState.currentCard = card;
+      // Keep timestamp — timer continues from when turn started
+    } else {
+      gameState.currentCard = null;
+      gameState.gs.phase = 'waiting';
+    }
+    pushState();
+    return json(res, { ok: true });
+  }
+
+  // Team or host: end turn
+  if (p === '/api/end-turn' && req.method === 'POST') {
+    turnHistory.push({ turn: gameState.gs.turn, teams: snapshotTeams() });
+    if (turnHistory.length > 20) turnHistory.shift();
+    gameState.gs.turn = (gameState.gs.turn + 1) % gameState.teams.length;
+    gameState.gs.phase = 'waiting';
+    gameState.currentCard = null;
+    gameState.timestamp = null;
+    pushState();
+    return json(res, { ok: true });
+  }
+
+  // Host debug: skip current team's turn (no scoring)
+  if (p === '/api/skip-turn' && req.method === 'POST') {
+    turnHistory.push({ turn: gameState.gs.turn, teams: snapshotTeams() });
+    if (turnHistory.length > 20) turnHistory.shift();
+    gameState.gs.turn = (gameState.gs.turn + 1) % gameState.teams.length;
+    gameState.gs.phase = 'waiting';
+    gameState.currentCard = null;
+    gameState.timestamp = null;
+    pushState();
+    return json(res, { ok: true });
+  }
+
+  // Host debug: undo last turn (restore scores + go back)
+  if (p === '/api/undo-turn' && req.method === 'POST') {
+    if (!turnHistory.length) return json(res, { error: 'Nothing to undo' }, 400);
+    const last = turnHistory.pop();
+    gameState.gs.turn = last.turn;
+    gameState.gs.phase = 'waiting';
+    gameState.currentCard = null;
+    gameState.timestamp = null;
+    last.teams.forEach((snap, i) => {
+      if (gameState.teams[i]) { gameState.teams[i].score = snap.score; gameState.teams[i].pos = snap.pos; }
+    });
+    if (gameState.phase === 'done') gameState.phase = 'active';
+    pushState();
+    return json(res, { ok: true });
+  }
+
+  // Cards
+  if (p === '/api/cards' && req.method === 'GET') return json(res, cards);
   if (p === '/api/cards' && req.method === 'POST') {
     const body = await readBody(req);
     if (Array.isArray(body)) { cards = body; }
-    else if (body.word) { cards.push({ word: body.word, cat: body.cat || 'Random', hint: body.hint || '' }); }
+    else if (body.word) { cards.push({ word: body.word, cat: body.cat || 'Object', hint: body.hint || '' }); }
     deck = shuffle(cards);
     pushState();
     return json(res, { ok: true, count: cards.length });
   }
-
   if (p === '/api/cards/clear' && req.method === 'POST') {
     cards = []; deck = [];
     pushState();
     return json(res, { ok: true });
   }
 
-  if (p === '/api/new-card' && req.method === 'POST') {
-    if (!deck.length) deck = shuffle(cards);
-    if (!deck.length) return json(res, { error: 'No cards' }, 400);
-    gameState.currentCard = deck.pop();
-    gameState.gs.phase = 'playing';
+  // Settings
+  if (p === '/api/settings' && req.method === 'POST') {
+    const body = await readBody(req);
+    if (body.timer) gameState.settings.timer = parseInt(body.timer);
+    if (body.spaces) gameState.settings.spaces = parseInt(body.spaces);
     pushState();
     return json(res, { ok: true });
   }
 
-  if (p === '/api/correct' && req.method === 'POST') {
-    const t = gameState.gs.turn;
-    gameState.teams[t].score++;
-    gameState.teams[t].pos = Math.min(
-      gameState.teams[t].pos + parseInt(gameState.settings.move),
-      parseInt(gameState.settings.spaces)
-    );
-    gameState.currentCard = null;
-    gameState.gs.phase = 'idle';
-    pushState();
-    return json(res, { ok: true });
-  }
-
-  if (p === '/api/skip' && req.method === 'POST') {
-    if (gameState.gs.skipsLeft <= 0) return json(res, { error: 'No skips left' }, 400);
-    gameState.gs.skipsLeft--;
-    gameState.currentCard = null;
-    gameState.gs.phase = 'idle';
-    pushState();
-    return json(res, { ok: true });
-  }
-
-  if (p === '/api/end-turn' && req.method === 'POST') {
-    const n = gameState.teams.length;
-    gameState.gs.turn = (gameState.gs.turn + 1) % n;
-    gameState.gs.phase = 'idle';
-    gameState.gs.skipsLeft = parseInt(gameState.settings.skips);
-    gameState.currentCard = null;
-    pushState();
-    return json(res, { ok: true });
-  }
-
-  if (p === '/api/reshuffle' && req.method === 'POST') {
-    deck = shuffle(cards);
-    pushState();
-    return json(res, { ok: true, deckSize: deck.length });
-  }
-
+  // Reset game (keep teams, reset scores)
   if (p === '/api/reset' && req.method === 'POST') {
     gameState.teams.forEach(t => { t.score = 0; t.pos = 0; });
-    gameState.gs = { turn: 0, phase: 'idle', skipsLeft: parseInt(gameState.settings.skips) };
+    gameState.gs = { turn: 0, phase: 'waiting' };
     gameState.currentCard = null;
+    gameState.timestamp = null;
+    gameState.phase = 'active';
     deck = shuffle(cards);
+    turnHistory = [];
     pushState();
     return json(res, { ok: true });
   }
 
-  if (p === '/' || p === '/host') {
-    return serveFile(res, path.join(__dirname, 'public', 'host.html'), 'text/html');
-  }
-  if (p === '/team') {
-    return serveFile(res, path.join(__dirname, 'public', 'team.html'), 'text/html');
-  }
+  // Static
+  if (p === '/' || p === '/host') return serveFile(res, path.join(__dirname, 'public', 'host.html'), 'text/html');
+  if (p === '/team') return serveFile(res, path.join(__dirname, 'public', 'team.html'), 'text/html');
 
   res.writeHead(404); res.end('Not found');
 });
 
-server.listen(PORT, () => {
-  console.log(`Articulate server running on port ${PORT}`);
-});
+server.listen(PORT, () => console.log(`Articulate server on port ${PORT}`));

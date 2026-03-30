@@ -16,7 +16,7 @@ body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-
 .tab:hover{color:var(--txt)}
 .tab.on{background:var(--acc);color:#000;font-weight:500}
 .room-pill{background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:500;letter-spacing:2px;cursor:pointer;color:var(--txt)}
-.pg{display:none;padding:18px;max-width:880px;margin:0 auto}
+.pg{display:none;padding:18px;max-width:960px;margin:0 auto}
 .pg.on{display:block}
 .card{background:var(--surf);border:1px solid var(--bdr);border-radius:13px;padding:16px;margin-bottom:12px}
 h3{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-bottom:12px}
@@ -24,7 +24,7 @@ label{font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.4px;disp
 input,select,textarea{width:100%;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;margin-bottom:10px}
 input:focus,select:focus,textarea:focus{border-color:var(--acc)}
 select option{background:var(--surf)}
-textarea{resize:vertical;min-height:70px;margin-bottom:10px}
+textarea{resize:vertical;min-height:70px}
 .btn{padding:9px 18px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:none;color:var(--txt);transition:all .12s}
 .btn:hover{background:var(--surf2)}
 .btn-acc{background:var(--acc);color:#000;border-color:var(--acc)}
@@ -33,29 +33,13 @@ textarea{resize:vertical;min-height:70px;margin-bottom:10px}
 .btn-ok:hover{background:#1f4a30}
 .btn-bad{background:#3d1a1a;color:#e85d5d;border-color:#5a2a2a}
 .btn-bad:hover{background:#4a2020}
+.btn-warn{background:#3d2e00;color:#e8a030;border-color:#5a4500}
+.btn-warn:hover{background:#4a3800}
 .btn-sm{padding:6px 12px;font-size:12px}
 .btn:disabled{opacity:.35;cursor:not-allowed}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .col2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .sep{height:1px;background:var(--bdr);margin:12px 0}
-.team-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr)}
-.team-row:last-child{border-bottom:none}
-.tdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.tscore{font-family:'Fraunces',serif;font-size:22px;color:var(--acc);min-width:36px;text-align:right}
-.tpos{font-size:12px;color:var(--muted);min-width:70px;text-align:right}
-.active-badge{font-size:11px;background:var(--acc);color:#000;padding:2px 8px;border-radius:20px;font-weight:500}
-.card-display{border:1px solid var(--bdr);border-radius:10px;padding:22px;text-align:center;min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:12px 0}
-.big-word{font-family:'Fraunces',serif;font-size:42px;font-weight:900;line-height:1.1}
-.cat-chip{font-size:11px;padding:2px 10px;border-radius:20px;font-weight:500;margin-bottom:8px;display:inline-block}
-.hint-txt{font-size:13px;color:var(--muted);margin-top:6px}
-.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
-.ring{position:relative;width:90px;height:90px}
-.ring svg{transform:rotate(-90deg)}
-circle{fill:none;stroke-width:6}
-.tr{stroke:var(--bdr)}
-.tp{stroke:var(--acc);stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s}
-.tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:26px;font-weight:700}
-.tlbl{font-size:11px;color:var(--muted)}
 .ci-list{display:flex;flex-direction:column;gap:5px;max-height:280px;overflow-y:auto}
 .ci{background:var(--surf2);border-radius:8px;padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .ci-w{font-weight:500;font-size:13px}
@@ -63,67 +47,151 @@ circle{fill:none;stroke-width:6}
 .ci-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 5px;border-radius:4px}
 .ci-del:hover{color:#e85d5d}
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:14px}
-.room-big{font-family:'Fraunces',serif;font-size:52px;font-weight:900;letter-spacing:8px;color:var(--acc);text-align:center;padding:10px 0}
-.room-hint{font-size:13px;color:var(--muted);text-align:center;margin-bottom:14px}
-.winner-box{background:#2a1f00;border:1px solid #6a4f00;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
-.winner-box h2{font-family:'Fraunces',serif;font-size:28px;color:var(--acc)}
-.stat{background:var(--surf2);border-radius:8px;padding:10px 14px;text-align:center}
-.stat .n{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--acc)}
-.stat .l{font-size:11px;color:var(--muted);margin-top:1px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
-@media(max-width:580px){.col2{grid-template-columns:1fr}.big-word{font-size:32px}}
+.winner-box{background:#2a1f00;border:1px solid #6a4f00;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.winner-box h2{font-family:'Fraunces',serif;font-size:28px;color:var(--acc)}
+
+/* Lobby */
+.room-big{font-family:'Fraunces',serif;font-size:56px;font-weight:900;letter-spacing:10px;color:var(--acc);text-align:center;padding:10px 0}
+.room-hint{font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px}
+.lobby-team{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.lobby-team:last-child{border-bottom:none}
+.tdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.lobby-empty{color:var(--muted);font-size:13px;font-style:italic;padding:14px 0}
+
+/* Board */
+.board-wrap{overflow-x:auto;padding:8px 0}
+.board-row{display:flex;gap:3px;margin-bottom:3px}
+.tile{width:52px;height:52px;border-radius:7px;border:1.5px solid var(--bdr);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;flex-shrink:0;cursor:default}
+.tile-num{font-size:9px;color:var(--muted);position:absolute;top:3px;left:4px;font-weight:500}
+.tile-tokens{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;max-width:44px;margin-top:4px}
+.token{width:18px;height:18px;border-radius:50%;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;border:1.5px solid rgba(0,0,0,.3)}
+.tile-start{background:var(--surf2) !important}
+.tile-start .tile-num{font-size:8px}
+.tile-win{border-color:#f5a623 !important}
+
+/* Current turn panel */
+.turn-panel{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;margin-bottom:12px}
+.turn-panel .card{flex:1;min-width:200px;margin:0}
+.cat-chip{font-size:12px;padding:3px 11px;border-radius:20px;font-weight:600;display:inline-block;margin-bottom:6px}
+
+/* Team scores */
+.score-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr)}
+.score-row:last-child{border-bottom:none}
+.score-row.active-team{background:rgba(232,160,48,.07);margin:0 -6px;padding:8px 6px;border-radius:7px;border-bottom:none}
+.tscore{font-family:'Fraunces',serif;font-size:22px;color:var(--acc);min-width:36px;text-align:right}
+.tpos{font-size:12px;color:var(--muted);min-width:80px;text-align:right}
+.active-badge{font-size:11px;background:var(--acc);color:#000;padding:2px 8px;border-radius:20px;font-weight:500}
+
+/* Legend */
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.leg-dot{width:10px;height:10px;border-radius:3px}
+
+/* Timer ring (host view) */
+.ring{position:relative;width:70px;height:70px}
+.ring svg{transform:rotate(-90deg)}
+circle{fill:none;stroke-width:6}
+.tr{stroke:var(--bdr)}
+.tp{stroke:var(--acc);stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s}
+.tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:20px;font-weight:700}
+
+@media(max-width:580px){.col2{grid-template-columns:1fr}.tile{width:40px;height:40px}.token{width:14px;height:14px;font-size:7px}}
 </style>
 </head>
 <body>
 <nav class="nav">
-  <div class="logo">Articulate! Host</div>
+  <div class="logo">Articulate!</div>
   <div class="tabs">
     <button class="tab on" onclick="showPg('game')">Game</button>
     <button class="tab" onclick="showPg('cards')">Cards</button>
-    <button class="tab" onclick="showPg('setup')">Setup</button>
-    <button class="tab" onclick="showPg('room')">Room</button>
+    <button class="tab" onclick="showPg('settings')">Settings</button>
   </div>
-  <div class="room-pill" onclick="showPg('room')" id="room-badge">No room</div>
+  <div class="room-pill" onclick="showPg('game')" id="room-badge">No room</div>
 </nav>
 
+<!-- GAME TAB -->
 <div class="pg on" id="pg-game">
-  <div id="winner-area"></div>
-  <div class="card">
-    <div id="teams-list"></div>
+
+  <!-- LOBBY VIEW -->
+  <div id="lobby-view">
+    <div class="card" style="text-align:center">
+      <h3>Room code</h3>
+      <div class="room-big" id="room-display">----</div>
+      <div class="room-hint">Teams go to <strong id="team-url"></strong> and enter this code to create their team</div>
+      <div class="row" style="justify-content:center;gap:8px">
+        <button class="btn btn-acc" onclick="createRoom()">New room</button>
+        <button class="btn" onclick="copyCode()">Copy code</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Teams joined <span id="team-count" style="font-size:13px;font-weight:400;color:var(--muted)">(0)</span></h3>
+      <div id="lobby-teams"><div class="lobby-empty">Waiting for teams to join...</div></div>
+      <div class="sep"></div>
+      <div class="row">
+        <button class="btn btn-acc" id="btn-start" onclick="startGame()" disabled>Start game</button>
+        <span style="font-size:12px;color:var(--muted)">Need at least 2 teams</span>
+      </div>
+    </div>
   </div>
-  <div class="card">
-    <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
-      <div style="flex:1;min-width:210px">
-        <div class="card-display" id="card-display">
-          <div style="color:var(--muted);font-size:14px">Press "New card" to begin the turn</div>
-        </div>
-        <div class="row" style="justify-content:center;gap:8px;margin-bottom:10px">
-          <button class="btn btn-acc" id="btn-new" onclick="api('new-card')">New card</button>
-          <button class="btn btn-ok" id="btn-yes" onclick="api('correct')" disabled>✓ Correct</button>
-          <button class="btn btn-bad" id="btn-skip" onclick="api('skip')" disabled>Skip</button>
-          <button class="btn" id="btn-end" onclick="api('end-turn')" disabled>End turn</button>
-        </div>
-        <div class="row" style="font-size:12px;color:var(--muted);gap:12px">
-          <span>Deck: <strong id="deck-ct">0</strong></span>
-          <span>Skips: <strong id="skips-ct">—</strong></span>
-          <button class="btn btn-sm" onclick="api('reshuffle')">Reshuffle</button>
+
+  <!-- ACTIVE GAME VIEW -->
+  <div id="game-view" style="display:none">
+    <div id="winner-area"></div>
+
+    <!-- Turn info + timer + debug -->
+    <div class="turn-panel">
+      <div class="card" style="flex:2;min-width:260px">
+        <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Current turn</div>
+        <div style="font-size:18px;font-weight:600;margin-bottom:6px" id="turn-team">—</div>
+        <div id="turn-status" style="font-size:13px;color:var(--muted)">Waiting</div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:10px">
+          <div id="cur-cat" style="display:none"></div>
         </div>
       </div>
-      <div class="timer-wrap">
-        <div class="ring">
-          <svg width="90" height="90" viewBox="0 0 90 90">
-            <circle class="tr" cx="45" cy="45" r="38"/>
-            <circle class="tp" id="tp" cx="45" cy="45" r="38" stroke-dasharray="238.8" stroke-dashoffset="0"/>
-          </svg>
-          <div class="tnum" id="tnum">—</div>
+      <div class="card" style="display:flex;align-items:center;justify-content:center;padding:14px">
+        <div>
+          <div class="ring">
+            <svg width="70" height="70" viewBox="0 0 70 70">
+              <circle class="tr" cx="35" cy="35" r="29"/>
+              <circle class="tp" id="tp" cx="35" cy="35" r="29" stroke-dasharray="182.2" stroke-dashoffset="0"/>
+            </svg>
+            <div class="tnum" id="tnum">—</div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:4px" id="tlbl">Ready</div>
         </div>
-        <div class="tlbl" id="tlbl">Ready</div>
       </div>
+      <div class="card" style="min-width:160px">
+        <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Debug</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <button class="btn btn-warn btn-sm" onclick="api('skip-turn')">Skip turn →</button>
+          <button class="btn btn-sm" id="btn-undo" onclick="undoTurn()">← Undo turn</button>
+          <button class="btn btn-bad btn-sm" onclick="if(confirm('Reset all scores?'))api('reset')">Reset scores</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Board -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <h3 style="margin:0">Board</h3>
+        <div class="legend" id="cat-legend"></div>
+      </div>
+      <div class="board-wrap">
+        <div id="board"></div>
+      </div>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="card">
+      <h3>Scores</h3>
+      <div id="scores-list"></div>
     </div>
   </div>
 </div>
 
+<!-- CARDS TAB -->
 <div class="pg" id="pg-cards">
   <div class="col2">
     <div class="card">
@@ -154,111 +222,138 @@ circle{fill:none;stroke-width:6}
   </div>
 </div>
 
-<div class="pg" id="pg-setup">
-  <div class="card">
-    <h3>Teams</h3>
-    <div id="teams-setup"></div>
-    <button class="btn btn-sm" style="margin-top:8px" onclick="addTeamRow()">+ Add team</button>
-  </div>
-  <div class="card">
-    <h3>Settings</h3>
+<!-- SETTINGS TAB -->
+<div class="pg" id="pg-settings">
+  <div class="card" style="max-width:480px">
+    <h3>Game settings</h3>
     <div class="col2">
-      <div><label>Timer (seconds)</label><input type="number" id="s-timer" value="60" min="10" max="180"/></div>
-      <div><label>Spaces to win</label><input type="number" id="s-spaces" value="30" min="10" max="60"/></div>
-      <div><label>Skips per turn</label><input type="number" id="s-skips" value="3" min="0" max="10"/></div>
-      <div><label>Spaces per correct</label>
-        <select id="s-move"><option value="1">1 space</option><option value="2">2 spaces</option></select>
-      </div>
+      <div><label>Timer (seconds)</label><input type="number" id="s-timer" value="60" min="10" max="300"/></div>
+      <div><label>Spaces to win</label><input type="number" id="s-spaces" value="30" min="5" max="60"/></div>
     </div>
-  </div>
-  <div class="row">
-    <button class="btn btn-acc" onclick="saveSetup()">Save &amp; new game</button>
-    <button class="btn" onclick="api('reset').then(()=>toast('Scores reset!'))">Reset scores</button>
-  </div>
-</div>
-
-<div class="pg" id="pg-room">
-  <div class="card" style="text-align:center">
-    <h3>Room code</h3>
-    <div class="room-big" id="room-display">----</div>
-    <div class="room-hint">Teams go to <strong id="team-url">your-app.railway.app/team</strong> and enter this code</div>
-    <div class="row" style="justify-content:center;gap:8px">
-      <button class="btn btn-acc" onclick="createRoom()">Create new room</button>
-      <button class="btn" onclick="copyCode()">Copy code</button>
-    </div>
-  </div>
-  <div class="card" style="margin-top:0">
-    <div style="display:flex;gap:10px">
-      <div class="stat" style="flex:1"><div class="n" id="stat-cards">0</div><div class="l">Cards</div></div>
-      <div class="stat" style="flex:1"><div class="n" id="stat-deck">0</div><div class="l">In deck</div></div>
-      <div class="stat" style="flex:1"><div class="n" id="stat-teams">2</div><div class="l">Teams</div></div>
-    </div>
+    <button class="btn btn-acc" onclick="saveSettings()">Save settings</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const CIRC = 238.8;
+const CIRC = 182.2;
 const TCOLORS = ['#4a9eff','#e85d8a','#52c97a','#f5a623','#ff7f50','#b39ddb'];
-const CATCOL = {Object:'#4a9eff',Action:'#e85d8a',World:'#52c97a',Person:'#f5a623',Nature:'#3cd08a',Random:'#c57aff'};
+const CATS = ['Object','Action','World','Person','Nature','Random'];
+const CAT_COL = {Object:'#4a9eff',Action:'#e85d8a',World:'#52c97a',Person:'#f5a623',Nature:'#3cd08a',Random:'#c57aff'};
 
 let state = null;
 let localCards = [];
 let timerI = null;
 let timerLeft = 0;
 let timerMax = 60;
-let timerStartedAt = null;
-let setupTeams = [{ name: 'Team 1' }, { name: 'Team 2' }];
+let undoAvail = false;
 
 async function api(endpoint, body) {
   try {
     const res = await fetch('/api/' + endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: body ? JSON.stringify(body) : undefined
     });
     return res.json();
-  } catch (e) {
-    toast('Connection error');
-  }
+  } catch { toast('Connection error'); }
 }
 
 function showPg(p) {
-  document.querySelectorAll('.pg, .tab').forEach(e => e.classList.remove('on'));
+  document.querySelectorAll('.pg,.tab').forEach(e => e.classList.remove('on'));
   document.getElementById('pg-' + p).classList.add('on');
   document.querySelectorAll('.tab').forEach(t => {
-    if (t.textContent.toLowerCase().includes(p) ||
-      (p === 'game' && t.textContent === 'Game') ||
-      (p === 'cards' && t.textContent === 'Cards') ||
-      (p === 'setup' && t.textContent === 'Setup') ||
-      (p === 'room' && t.textContent === 'Room')) t.classList.add('on');
+    if ((p === 'game' && t.textContent === 'Game') ||
+        (p === 'cards' && t.textContent === 'Cards') ||
+        (p === 'settings' && t.textContent === 'Settings')) t.classList.add('on');
   });
   if (p === 'cards') renderCards();
-  if (p === 'setup') renderSetup();
-  if (p === 'room') renderRoom();
 }
 
 function applyState(s) {
   state = s;
-  renderGameTab();
-  renderRoom();
+  document.getElementById('room-badge').textContent = s.room || 'No room';
+  document.getElementById('room-display').textContent = s.room || '----';
+  document.getElementById('team-url').textContent = location.origin + '/team';
+
+  const isLobby = s.phase === 'lobby';
+  document.getElementById('lobby-view').style.display = isLobby ? '' : 'none';
+  document.getElementById('game-view').style.display = isLobby ? 'none' : '';
+
+  if (isLobby) renderLobby(s);
+  else renderGame(s);
 }
 
-function renderGameTab() {
-  if (!state) return;
-  const { teams, settings, gs, currentCard, deckSize } = state;
+function renderLobby(s) {
+  const teams = s.teams || [];
+  document.getElementById('team-count').textContent = `(${teams.length})`;
+  const btn = document.getElementById('btn-start');
+  btn.disabled = teams.length < 2;
 
-  // Winner check
-  const w = teams.findIndex(t => t.pos >= parseInt(settings.spaces));
+  if (!teams.length) {
+    document.getElementById('lobby-teams').innerHTML = '<div class="lobby-empty">Waiting for teams to join...</div>';
+    return;
+  }
+  document.getElementById('lobby-teams').innerHTML = teams.map((t, i) => `
+    <div class="lobby-team">
+      <div class="tdot" style="background:${TCOLORS[i % 6]}"></div>
+      <div style="flex:1;font-weight:500">${t.name}</div>
+      <div style="font-size:12px;color:${t.connected ? '#52c97a' : 'var(--muted)'}">
+        ${t.connected ? 'Connected' : 'Not connected'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderGame(s) {
+  const { teams, settings, gs, currentCard, phase } = s;
+
+  // Winner
   const wa = document.getElementById('winner-area');
-  if (w >= 0) {
-    wa.innerHTML = `<div class="winner-box"><h2>🎉 ${teams[w].name} wins!</h2><p style="color:var(--muted);font-size:13px;margin-top:6px">First to ${settings.spaces} spaces!</p><button class="btn btn-sm btn-acc" style="margin-top:10px" onclick="api('reset')">Play again</button></div>`;
+  if (phase === 'done') {
+    const w = teams.find(t => t.pos >= parseInt(settings.spaces));
+    wa.innerHTML = w
+      ? `<div class="winner-box"><h2>${w.name} wins!</h2><p style="color:var(--muted);font-size:13px;margin-top:6px">First to ${settings.spaces} spaces!</p><button class="btn btn-sm btn-acc" style="margin-top:10px" onclick="api('reset')">Play again</button></div>`
+      : '';
   } else wa.innerHTML = '';
 
-  // Teams
-  document.getElementById('teams-list').innerHTML = teams.map((t, i) => `
-    <div class="team-row">
+  // Turn panel
+  const activeTeam = teams[gs.turn];
+  document.getElementById('turn-team').textContent = activeTeam ? activeTeam.name : '—';
+
+  const catPos = activeTeam ? activeTeam.pos : 0;
+  const cat = CATS[catPos % CATS.length];
+  const catEl = document.getElementById('cur-cat');
+  catEl.style.display = '';
+  catEl.innerHTML = `<span class="cat-chip" style="background:${CAT_COL[cat]}22;color:${CAT_COL[cat]}">${cat}</span>`;
+
+  if (gs.phase === 'playing') {
+    document.getElementById('turn-status').textContent = currentCard
+      ? `Describing: "${currentCard.word}"`
+      : 'Card active';
+  } else {
+    document.getElementById('turn-status').textContent = 'Waiting for team to get a card';
+  }
+
+  // Timer
+  timerMax = parseInt(settings.timer);
+  if (gs.phase === 'playing' && s.timestamp) {
+    const elapsed = Math.floor((Date.now() - s.timestamp) / 1000);
+    timerLeft = Math.max(0, timerMax - elapsed);
+    startTimer();
+  } else {
+    stopTimer();
+    document.getElementById('tnum').textContent = timerMax;
+    document.getElementById('tlbl').textContent = 'Ready';
+    setTP(1);
+  }
+
+  // Board
+  renderBoard(s);
+
+  // Scores
+  document.getElementById('scores-list').innerHTML = teams.map((t, i) => `
+    <div class="score-row ${i === gs.turn ? 'active-team' : ''}">
       <div class="tdot" style="background:${TCOLORS[i % 6]}"></div>
       <div style="flex:1;font-weight:500;font-size:14px">${t.name}</div>
       <div class="tpos">${t.pos} / ${settings.spaces}</div>
@@ -266,57 +361,63 @@ function renderGameTab() {
       ${i === gs.turn ? '<div class="active-badge">Playing</div>' : ''}
     </div>
   `).join('');
-
-  // Card
-  const cd = document.getElementById('card-display');
-  if (currentCard) {
-    const col = CATCOL[currentCard.cat] || '#999';
-    cd.innerHTML = `
-      <div class="cat-chip" style="background:${col}22;color:${col}">${currentCard.cat}</div>
-      <div class="big-word">${currentCard.word}</div>
-      ${currentCard.hint ? `<div class="hint-txt">💡 ${currentCard.hint}</div>` : ''}
-    `;
-  } else {
-    cd.innerHTML = '<div style="color:var(--muted);font-size:14px">Press "New card" to begin the turn</div>';
-  }
-
-  // Buttons
-  const hasCard = !!currentCard;
-  document.getElementById('btn-yes').disabled = !hasCard;
-  document.getElementById('btn-skip').disabled = !hasCard;
-  document.getElementById('btn-end').disabled = gs.phase === 'idle' && !hasCard;
-  document.getElementById('btn-new').disabled = hasCard;
-  document.getElementById('deck-ct').textContent = deckSize || 0;
-  document.getElementById('skips-ct').textContent = gs.skipsLeft;
-
-  // Timer
-  timerMax = parseInt(settings.timer);
-  if (gs.phase === 'playing') {
-    const elapsed = Math.floor((Date.now() - state.timestamp) / 1000);
-    timerLeft = Math.max(0, timerMax - elapsed);
-    startClientTimer();
-  } else {
-    stopClientTimer();
-    document.getElementById('tnum').textContent = timerMax;
-    document.getElementById('tlbl').textContent = 'Ready';
-    setTP(1);
-  }
 }
 
-function startClientTimer() {
-  stopClientTimer();
+function renderBoard(s) {
+  const { teams, settings, gs } = s;
+  const spaces = parseInt(settings.spaces);
+
+  // Build tile list: 0 = start, 1..spaces
+  const tiles = [];
+  for (let i = 0; i <= spaces; i++) {
+    const cat = i === 0 ? null : CATS[(i - 1) % CATS.length];
+    tiles.push({ pos: i, cat });
+  }
+
+  // Snake rows of 10
+  const ROW = 10;
+  const rows = [];
+  for (let r = 0; r * ROW < tiles.length; r++) {
+    const slice = tiles.slice(r * ROW, r * ROW + ROW);
+    rows.push(r % 2 === 1 ? [...slice].reverse() : slice);
+  }
+
+  // Legend
+  document.getElementById('cat-legend').innerHTML = CATS.map(c =>
+    `<div class="leg-item"><div class="leg-dot" style="background:${CAT_COL[c]}"></div>${c}</div>`
+  ).join('');
+
+  // Render
+  document.getElementById('board').innerHTML = rows.map(row =>
+    `<div class="board-row">${row.map(tile => {
+      const teamsHere = teams.map((t, i) => ({ ...t, i })).filter(t => t.pos === tile.pos);
+      const col = tile.cat ? CAT_COL[tile.cat] : null;
+      const isActive = teamsHere.some(t => t.i === gs.turn);
+      const isWin = tile.pos === spaces;
+      const bg = tile.pos === 0 ? 'var(--surf2)' : `${col}20`;
+      const border = isActive ? col : (isWin ? '#f5a623' : 'var(--bdr)');
+      const tokens = teamsHere.map(t =>
+        `<div class="token" style="background:${TCOLORS[t.i % 6]}" title="${t.name}">${t.name[0].toUpperCase()}</div>`
+      ).join('');
+      return `<div class="tile${tile.pos === 0 ? ' tile-start' : ''}${isWin ? ' tile-win' : ''}" style="background:${bg};border-color:${border}">
+        <div class="tile-num">${tile.pos === 0 ? 'S' : tile.pos}</div>
+        <div class="tile-tokens">${tokens}</div>
+      </div>`;
+    }).join('')}</div>`
+  ).join('');
+}
+
+function startTimer() {
+  stopTimer();
   renderTimer();
   timerI = setInterval(() => {
     timerLeft = Math.max(0, timerLeft - 1);
     renderTimer();
-    if (timerLeft <= 0) stopClientTimer();
+    if (timerLeft <= 0) stopTimer();
   }, 1000);
 }
 
-function stopClientTimer() {
-  clearInterval(timerI);
-  timerI = null;
-}
+function stopTimer() { clearInterval(timerI); timerI = null; }
 
 function renderTimer() {
   document.getElementById('tnum').textContent = timerLeft;
@@ -331,11 +432,7 @@ function setTP(f) {
 
 async function createRoom() {
   const r = await api('create-room');
-  if (r && r.room) {
-    document.getElementById('room-display').textContent = r.room;
-    document.getElementById('room-badge').textContent = r.room;
-    toast('Room created! Share the code.');
-  }
+  if (r && r.room) toast('Room created! Share the code.');
 }
 
 function copyCode() {
@@ -344,17 +441,26 @@ function copyCode() {
   navigator.clipboard.writeText(code).then(() => toast('Code copied!')).catch(() => toast(code));
 }
 
-function renderRoom() {
-  if (state) {
-    document.getElementById('room-display').textContent = state.room || '----';
-    document.getElementById('room-badge').textContent = state.room || 'No room';
-    document.getElementById('stat-deck').textContent = state.deckSize || 0;
-    document.getElementById('stat-teams').textContent = state.teams ? state.teams.length : 2;
-  }
-  document.getElementById('stat-cards').textContent = localCards.length;
-  document.getElementById('team-url').textContent = location.origin + '/team';
+async function startGame() {
+  const r = await api('start-game');
+  if (r && r.ok) toast('Game started!');
+  else if (r && r.error) toast(r.error);
 }
 
+async function undoTurn() {
+  const r = await api('undo-turn');
+  if (r && r.error) toast(r.error);
+  else toast('Turn undone');
+}
+
+async function saveSettings() {
+  const timer = parseInt(document.getElementById('s-timer').value) || 60;
+  const spaces = parseInt(document.getElementById('s-spaces').value) || 30;
+  await api('settings', { timer, spaces });
+  toast('Settings saved');
+}
+
+// Cards
 async function addCard() {
   const w = document.getElementById('cw').value.trim();
   if (!w) { toast('Enter a word!'); return; }
@@ -371,7 +477,7 @@ async function bulkImport() {
   const newCards = [];
   lines.forEach(l => {
     const p = l.split(',');
-    if (p[0]) newCards.push({ word: p[0].trim(), cat: p[1] ? p[1].trim() : 'Random', hint: p[2] ? p[2].trim() : '' });
+    if (p[0]) newCards.push({ word: p[0].trim(), cat: p[1] ? p[1].trim() : 'Object', hint: p[2] ? p[2].trim() : '' });
   });
   if (!newCards.length) { toast('Nothing to import'); return; }
   await fetch('/api/cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify([...localCards, ...newCards]) });
@@ -418,7 +524,6 @@ async function loadCards() {
   const r = await fetch('/api/cards');
   localCards = await r.json();
   renderCards();
-  renderRoom();
 }
 
 function renderCards() {
@@ -427,57 +532,10 @@ function renderCards() {
   if (!localCards.length) { el.innerHTML = '<div class="empty">No cards yet</div>'; return; }
   el.innerHTML = localCards.map((c, i) => `
     <div class="ci">
-      <div><div class="ci-w">${c.word}</div><div class="ci-c" style="color:${CATCOL[c.cat] || '#999'}">${c.cat}${c.hint ? ' · ' + c.hint : ''}</div></div>
+      <div><div class="ci-w">${c.word}</div><div class="ci-c" style="color:${CAT_COL[c.cat] || '#999'}">${c.cat}${c.hint ? ' · ' + c.hint : ''}</div></div>
       <button class="ci-del" onclick="deleteCard(${i})">✕</button>
     </div>
   `).join('');
-}
-
-function renderSetup() {
-  if (state) setupTeams = state.teams.map(t => ({ name: t.name }));
-  const el = document.getElementById('teams-setup');
-  el.innerHTML = setupTeams.map((t, i) => `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
-      <div class="tdot" style="background:${TCOLORS[i % 6]}"></div>
-      <input type="text" value="${t.name}" id="tn-${i}" style="flex:1;margin:0"/>
-      <button class="btn btn-sm" onclick="removeTeamRow(${i})" ${setupTeams.length <= 2 ? 'disabled' : ''}>✕</button>
-    </div>
-  `).join('');
-  if (state) {
-    document.getElementById('s-timer').value = state.settings.timer;
-    document.getElementById('s-spaces').value = state.settings.spaces;
-    document.getElementById('s-skips').value = state.settings.skips;
-    document.getElementById('s-move').value = state.settings.move;
-  }
-}
-
-function addTeamRow() {
-  if (setupTeams.length >= 6) { toast('Max 6 teams!'); return; }
-  setupTeams.push({ name: `Team ${setupTeams.length + 1}` });
-  renderSetup();
-}
-
-function removeTeamRow(i) {
-  if (setupTeams.length <= 2) { toast('Need at least 2 teams!'); return; }
-  setupTeams.splice(i, 1);
-  renderSetup();
-}
-
-async function saveSetup() {
-  setupTeams.forEach((_, i) => {
-    const e = document.getElementById('tn-' + i);
-    if (e) setupTeams[i].name = e.value || setupTeams[i].name;
-  });
-  const teams = setupTeams.map(t => ({ name: t.name, score: 0, pos: 0 }));
-  const settings = {
-    timer: parseInt(document.getElementById('s-timer').value) || 60,
-    spaces: parseInt(document.getElementById('s-spaces').value) || 30,
-    skips: parseInt(document.getElementById('s-skips').value) || 3,
-    move: parseInt(document.getElementById('s-move').value) || 1
-  };
-  await api('setup', { teams, settings });
-  toast('Saved! New game started.');
-  showPg('game');
 }
 
 function toast(msg) {
@@ -486,17 +544,24 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-// SSE connection
 function connectSSE() {
   const es = new EventSource('/events');
   es.onmessage = e => {
-    try {
-      const d = JSON.parse(e.data);
-      if (d.type === 'state') applyState(d.payload);
-    } catch {}
+    try { const d = JSON.parse(e.data); if (d.type === 'state') applyState(d.payload); } catch {}
   };
   es.onerror = () => setTimeout(connectSSE, 3000);
 }
+
+// Sync settings inputs when state arrives
+function syncSettingsInputs(s) {
+  if (s && s.settings) {
+    document.getElementById('s-timer').value = s.settings.timer;
+    document.getElementById('s-spaces').value = s.settings.spaces;
+  }
+}
+
+const origApply = applyState;
+window.applyState = function(s) { origApply(s); syncSettingsInputs(s); };
 
 connectSSE();
 loadCards();
