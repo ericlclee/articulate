@@ -8,16 +8,21 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0f0e0d;--surf:#1c1a17;--surf2:#252220;--bdr:#3a3530;--txt:#f5f0e8;--muted:#9a9080;--acc:#e8a030;--red:#c0392b;--green:#27ae60}
-body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh}
-.nav{background:var(--surf);border-bottom:1px solid var(--bdr);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+html,body{height:100%}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;display:flex;flex-direction:column}
+.nav{background:var(--surf);border-bottom:1px solid var(--bdr);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-shrink:0}
 .logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--acc)}
 .tabs{display:flex;gap:3px}
 .tab{background:none;border:1px solid transparent;padding:6px 14px;border-radius:8px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .12s}
 .tab:hover{color:var(--txt)}
 .tab.on{background:var(--acc);color:#000;font-weight:500}
 .room-pill{background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:500;letter-spacing:2px;cursor:pointer;color:var(--txt)}
-.pg{display:none;padding:18px;max-width:960px;margin:0 auto}
+.pg{display:none;padding:18px;max-width:960px;margin:0 auto;width:100%}
 .pg.on{display:block}
+#pg-game.on{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+#game-view{flex:1;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+#board-card{flex:1;display:flex;flex-direction:column;min-height:0;margin-bottom:0}
+#board-card .board-wrap{flex:1;align-items:center;overflow:auto}
 .card{background:var(--surf);border:1px solid var(--bdr);border-radius:13px;padding:16px;margin-bottom:12px}
 h3{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-bottom:12px}
 label{font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.4px;display:block;margin-bottom:4px;text-transform:uppercase}
@@ -61,12 +66,14 @@ textarea{resize:vertical;min-height:70px}
 .lobby-empty{color:var(--muted);font-size:13px;font-style:italic;padding:14px 0}
 
 /* Board */
-.board-wrap{overflow-x:auto;padding:8px 0}
+.board-wrap{overflow-x:auto;padding:8px 0;display:flex;justify-content:center}
 .board-row{display:flex;gap:3px;margin-bottom:3px}
-.tile{width:52px;height:52px;border-radius:7px;border:1.5px solid var(--bdr);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;flex-shrink:0;cursor:default}
-.tile-num{font-size:9px;color:var(--muted);position:absolute;top:3px;left:4px;font-weight:500}
-.tile-tokens{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;max-width:44px;margin-top:4px}
-.token{width:18px;height:18px;border-radius:50%;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;border:1.5px solid rgba(0,0,0,.3)}
+.tile-active{box-shadow:0 0 0 2.5px var(--acc),0 0 10px 2px rgba(232,160,48,.35) !important;z-index:1}
+.tile{width:var(--tile-sz,52px);height:var(--tile-sz,52px);border-radius:7px;border:1.5px solid var(--bdr);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;flex-shrink:0;cursor:default}
+.tile-num{font-size:var(--tile-num-sz,9px);color:var(--muted);position:absolute;top:3px;left:4px;font-weight:500}
+.tile-tokens{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;max-width:var(--tokens-max,44px);margin-top:4px}
+.token{width:var(--token-sz,18px);height:var(--token-sz,18px);border-radius:50%;font-size:var(--token-font,8px);font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;border:1.5px solid rgba(0,0,0,.3);transition:transform .2s}
+.token-active{border-color:rgba(255,255,255,0.9)}
 .tile-start{background:var(--surf2) !important}
 .tile-start .tile-num{font-size:8px}
 .tile-win{border-color:#f5a623 !important}
@@ -168,12 +175,13 @@ circle{fill:none;stroke-width:6}
           <button class="btn btn-warn btn-sm" onclick="api('skip-turn')">Skip turn →</button>
           <button class="btn btn-sm" id="btn-undo" onclick="undoTurn()">← Undo turn</button>
           <button class="btn btn-bad btn-sm" onclick="if(confirm('Reset all scores?'))api('reset')">Reset scores</button>
+          <button class="btn btn-bad btn-sm" onclick="if(confirm('End game and create a new lobby?'))createRoom()">New lobby</button>
         </div>
       </div>
     </div>
 
     <!-- Board -->
-    <div class="card">
+    <div class="card" id="board-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
         <h3 style="margin:0">Board</h3>
         <div class="legend" id="cat-legend"></div>
@@ -183,11 +191,6 @@ circle{fill:none;stroke-width:6}
       </div>
     </div>
 
-    <!-- Scoreboard -->
-    <div class="card">
-      <h3>Scores</h3>
-      <div id="scores-list"></div>
-    </div>
   </div>
 </div>
 
@@ -228,7 +231,7 @@ circle{fill:none;stroke-width:6}
     <h3>Game settings</h3>
     <div class="col2">
       <div><label>Timer (seconds)</label><input type="number" id="s-timer" value="60" min="10" max="300"/></div>
-      <div><label>Spaces to win</label><input type="number" id="s-spaces" value="30" min="5" max="60"/></div>
+      <div><label>Spaces to win</label><input type="number" id="s-spaces" value="49" min="5" max="60"/></div>
     </div>
     <button class="btn btn-acc" onclick="saveSettings()">Save settings</button>
   </div>
@@ -240,7 +243,7 @@ circle{fill:none;stroke-width:6}
 const CIRC = 182.2;
 const TCOLORS = ['#4a9eff','#e85d8a','#52c97a','#f5a623','#ff7f50','#b39ddb'];
 const CATS = ['Object','Action','World','Person','Nature','Random'];
-const CAT_COL = {Object:'#4a9eff',Action:'#e85d8a',World:'#52c97a',Person:'#f5a623',Nature:'#3cd08a',Random:'#c57aff'};
+const CAT_COL = {Object:'#4a9eff',Action:'#ff6b6b',World:'#52c97a',Person:'#f5a623',Nature:'#26c6da',Random:'#c57aff'};
 
 let state = null;
 let localCards = [];
@@ -321,16 +324,14 @@ function renderGame(s) {
   const activeTeam = teams[gs.turn];
   document.getElementById('turn-team').textContent = activeTeam ? activeTeam.name : '—';
 
-  const catPos = activeTeam ? activeTeam.pos : 0;
-  const cat = CATS[catPos % CATS.length];
+  const catPos = activeTeam ? activeTeam.pos : 1;
+  const cat = CATS[((catPos - 1) % CATS.length + CATS.length) % CATS.length];
   const catEl = document.getElementById('cur-cat');
   catEl.style.display = '';
   catEl.innerHTML = `<span class="cat-chip" style="background:${CAT_COL[cat]}22;color:${CAT_COL[cat]}">${cat}</span>`;
 
   if (gs.phase === 'playing') {
-    document.getElementById('turn-status').textContent = currentCard
-      ? `Describing: "${currentCard.word}"`
-      : 'Card active';
+    document.getElementById('turn-status').textContent = `${activeTeam ? activeTeam.name : 'Team'} is guessing… (${gs.turnScore || 0} this turn)`;
   } else {
     document.getElementById('turn-status').textContent = 'Waiting for team to get a card';
   }
@@ -351,31 +352,38 @@ function renderGame(s) {
   // Board
   renderBoard(s);
 
-  // Scores
-  document.getElementById('scores-list').innerHTML = teams.map((t, i) => `
-    <div class="score-row ${i === gs.turn ? 'active-team' : ''}">
-      <div class="tdot" style="background:${TCOLORS[i % 6]}"></div>
-      <div style="flex:1;font-weight:500;font-size:14px">${t.name}</div>
-      <div class="tpos">${t.pos} / ${settings.spaces}</div>
-      <div class="tscore">${t.score}</div>
-      ${i === gs.turn ? '<div class="active-badge">Playing</div>' : ''}
-    </div>
-  `).join('');
 }
 
 function renderBoard(s) {
   const { teams, settings, gs } = s;
   const spaces = parseInt(settings.spaces);
 
-  // Build tile list: 0 = start, 1..spaces
+  // Build tile list: 1..spaces, all coloured
   const tiles = [];
-  for (let i = 0; i <= spaces; i++) {
-    const cat = i === 0 ? null : CATS[(i - 1) % CATS.length];
+  for (let i = 1; i <= spaces; i++) {
+    const cat = CATS[(i - 1) % CATS.length];
     tiles.push({ pos: i, cat });
   }
 
-  // Snake rows of 10
-  const ROW = 10;
+  // Rows sized to approximate a square grid
+  const ROW = Math.ceil(Math.sqrt(spaces));
+  const numRows = Math.ceil(spaces / ROW);
+  const GAP = 3;
+  const boardCard = document.getElementById('board-card');
+  const headerEl = boardCard.querySelector(':scope > div');
+  const headerH = headerEl ? headerEl.offsetHeight + 10 : 50;
+  const availW = boardCard.clientWidth - 32;
+  const availH = (boardCard.clientHeight || boardCard.clientWidth) - 32 - headerH - 20;
+  const tileFromW = Math.floor((availW - GAP * (ROW - 1)) / ROW);
+  const tileFromH = Math.floor((availH - GAP * (numRows - 1)) / numRows);
+  const tileSize = Math.max(28, Math.min(tileFromW, tileFromH));
+  const tokenSize = Math.max(12, Math.round(tileSize * 0.35));
+  const root = document.documentElement;
+  root.style.setProperty('--tile-sz', tileSize + 'px');
+  root.style.setProperty('--tile-num-sz', Math.max(7, Math.round(tileSize * 0.17)) + 'px');
+  root.style.setProperty('--tokens-max', (tileSize - 8) + 'px');
+  root.style.setProperty('--token-sz', tokenSize + 'px');
+  root.style.setProperty('--token-font', Math.max(6, Math.round(tokenSize * 0.45)) + 'px');
   const rows = [];
   for (let r = 0; r * ROW < tiles.length; r++) {
     const slice = tiles.slice(r * ROW, r * ROW + ROW);
@@ -394,13 +402,13 @@ function renderBoard(s) {
       const col = tile.cat ? CAT_COL[tile.cat] : null;
       const isActive = teamsHere.some(t => t.i === gs.turn);
       const isWin = tile.pos === spaces;
-      const bg = tile.pos === 0 ? 'var(--surf2)' : `${col}20`;
-      const border = isActive ? col : (isWin ? '#f5a623' : 'var(--bdr)');
+      const bg = `${col}45`;
+      const border = isWin ? '#f5a623' : 'var(--bdr)';
       const tokens = teamsHere.map(t =>
-        `<div class="token" style="background:${TCOLORS[t.i % 6]}" title="${t.name}">${t.name[0].toUpperCase()}</div>`
+        `<div class="token${t.i === gs.turn ? ' token-active' : ''}" style="background:${TCOLORS[t.i % 6]}" title="${t.name}">${t.name[0].toUpperCase()}</div>`
       ).join('');
-      return `<div class="tile${tile.pos === 0 ? ' tile-start' : ''}${isWin ? ' tile-win' : ''}" style="background:${bg};border-color:${border}">
-        <div class="tile-num">${tile.pos === 0 ? 'S' : tile.pos}</div>
+      return `<div class="tile${isWin ? ' tile-win' : ''}${isActive ? ' tile-active' : ''}" style="background:${bg};border-color:${border}">
+        <div class="tile-num">${tile.pos}</div>
         <div class="tile-tokens">${tokens}</div>
       </div>`;
     }).join('')}</div>`
@@ -566,6 +574,8 @@ window.applyState = function(s) { origApply(s); syncSettingsInputs(s); };
 connectSSE();
 loadCards();
 fetch('/api/state').then(r => r.json()).then(applyState);
+
+new ResizeObserver(() => { if (state) renderBoard(state); }).observe(document.getElementById('board-card'));
 </script>
 </body>
 </html>

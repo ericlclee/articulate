@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A real-time multiplayer party game (inspired by the board game "Articulate!"). Players describe words while teammates guess them. A host controls the game via browser; teams join on their phones.
+A real-time multiplayer party game (inspired by the board game "Articulate!"). One device per team — teams join a lobby, the host starts the game, and team devices control their own turn flow. The host monitors a physical-style board and has debug controls.
 
 ## Tech Stack
 
@@ -28,51 +28,88 @@ No build step, no compilation, no tooling required beyond Node.js >= 18.
 ```
 articulate/
 ├── server.js          # HTTP server, game logic, REST API, SSE broadcast
+├── sample-cards.json  # 60 sample cards (10 per category) for import
 └── public/
-    ├── host.html      # Host interface (game leader, 4 tabs: game/cards/setup/room)
-    └── team.html      # Team interface (join screen + live game view)
+    ├── host.html      # Host interface (lobby, board, debug, cards, settings)
+    └── team.html      # Team interface (join/lobby/game)
 ```
+
+## Game Flow
+
+### Phase: `lobby`
+1. Host creates a room (4-letter code) via **New room**
+2. Teams navigate to `/team`, enter the code and a team name → creates their team slot
+3. Host sees teams appear in the lobby list in real time
+4. Host clicks **Start game** (requires ≥2 teams) → moves to `active`
+
+### Phase: `active`
+- One device per team controls that team's turn
+- When it's your turn: press **Get card** → starts the timer
+- Cards are drawn from the **active category** only (determined by the team's current position)
+- **Correct** → `turnScore+1`, auto-draws next card from same category (timer keeps running, position does NOT change mid-turn)
+- **End turn** (or timer expiring) → applies `turnScore` to position, passes to next team, checks for winner
+- Teams rejoining during an active game must enter their exact team name
+
+### Phase: `done`
+- First team whose position reaches `settings.spaces` after an end-turn wins
+- Host can reset positions to play again
 
 ## Architecture
 
-### Backend (`server.js`)
-
-All game state lives in a single `gameState` object:
+### Game State
 
 ```js
 {
-  room, teams[{ name, score, pos }], settings: { timer, spaces, skips, move },
-  gs: { turn, phase, skipsLeft }, currentCard: { word, cat, hint },
-  timestamp, deckSize
+  room,              // 4-letter code or null
+  phase,             // 'lobby' | 'active' | 'done'
+  teams: [{
+    name, pos, connected
+  }],
+  settings: { timer: 60, spaces: 49 },
+  gs: {
+    turn,            // index of active team
+    phase,           // 'waiting' | 'playing'
+    turnScore        // correct answers this turn (applied to pos on end-turn)
+  },
+  currentCard: { word, cat, hint } | null,
+  timestamp,         // Date.now() when current card was drawn (for timer sync)
+  deckSize
 }
 ```
 
 Key patterns:
-- `pushState()` — updates `timestamp` and broadcasts full state to all SSE clients
-- `broadcast(data)` — sends SSE message to all connected clients
-- `/events` — SSE endpoint; clients subscribe and receive all state updates
-- All action routes are `POST`; only `/api/state` is `GET`
+- `pushState()` — broadcasts full state to all SSE clients
+- `turnHistory` (server-only) — array of `{ turn, teams: [{pos}] }` snapshots for undo (last 20)
+- Timer sync: clients compute `elapsed = Date.now() - timestamp` to extrapolate countdown
+- `catDecks` (server-only) — per-category shuffle pools; each category cycles independently
 
-### Frontend
+### Board
 
-- **Host** (`host.html`): Tabs navigate via `showPg()`. All state comes from SSE; `applyState()` re-renders on every update. Circular CSS timer extrapolates from `timestamp` to avoid clock skew.
-- **Teams** (`team.html`): Join screen → game screen. Card display only shown to the team whose turn it is.
+Tiles 1 (start) through `settings.spaces` (win), default 49 (7×7). Categories cycle `['Object','Action','World','Person','Nature','Random']` by position (`pos=1` → Object, `pos=2` → Action, etc.). Rendered as a snake (alternating row direction, `ceil(√spaces)` tiles per row) in the host view. Tile size scales dynamically to fill the board card container via `ResizeObserver`.
+
+### Category colours
+
+```js
+{ Object:'#4a9eff', Action:'#ff6b6b', World:'#52c97a', Person:'#f5a623', Nature:'#26c6da', Random:'#c57aff' }
+```
 
 ## API Endpoints
 
 | Method | Path | Purpose |
 |--------|------|---------|
 | GET | `/api/state` | Fetch full game state |
-| POST | `/api/create-room` | Generate 4-letter room code |
-| POST | `/api/setup` | Initialize teams & settings, shuffle deck |
+| POST | `/api/create-room` | Reset lobby, generate new room code |
+| POST | `/api/join-team` | Lobby: create team. Active: rejoin by name |
+| POST | `/api/start-game` | Host: move from lobby → active |
+| POST | `/api/new-card` | Team: draw card from active category, start timer |
+| POST | `/api/correct` | Team: increment turnScore, auto-draw next card (same category) |
+| POST | `/api/end-turn` | Team/host: apply turnScore to pos, check winner, advance turn |
+| POST | `/api/skip-turn` | Host debug: skip current turn (no position change) |
+| POST | `/api/undo-turn` | Host debug: restore previous turn's positions |
+| POST | `/api/reset` | Reset all positions, reshuffle, phase → active |
 | GET/POST | `/api/cards` | List / add cards |
 | POST | `/api/cards/clear` | Clear all cards |
-| POST | `/api/new-card` | Draw next card |
-| POST | `/api/correct` | Mark correct, advance score/position |
-| POST | `/api/skip` | Skip card |
-| POST | `/api/end-turn` | Advance to next team |
-| POST | `/api/reshuffle` | Shuffle remaining deck |
-| POST | `/api/reset` | Reset scores, reshuffle |
+| POST | `/api/settings` | Update timer and spaces |
 | GET | `/events` | SSE subscription |
 
 ## Key Constraints

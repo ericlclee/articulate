@@ -142,6 +142,7 @@ circle{fill:none;stroke-width:7}
         Get card
       </button>
       <div id="answer-controls" style="display:none">
+        <div id="turn-score-display" style="text-align:center;margin-bottom:10px;font-size:13px;color:var(--muted)">This turn: <strong id="turn-score-val" style="color:var(--acc);font-family:'Fraunces',serif;font-size:18px">0</strong></div>
         <button class="btn btn-ok" onclick="markCorrect()">Correct</button>
         <button class="btn btn-end" onclick="endTurn()">End turn</button>
       </div>
@@ -159,7 +160,7 @@ circle{fill:none;stroke-width:7}
 <script>
 const CIRC = 326.7;
 const TCOLORS = ['#4a9eff','#e85d8a','#52c97a','#f5a623','#ff7f50','#b39ddb'];
-const CATCOL = {Object:'#4a9eff',Action:'#e85d8a',World:'#52c97a',Person:'#f5a623',Nature:'#3cd08a',Random:'#c57aff'};
+const CATCOL = {Object:'#4a9eff',Action:'#ff6b6b',World:'#52c97a',Person:'#f5a623',Nature:'#26c6da',Random:'#c57aff'};
 
 let myTeamIdx = -1;
 let myRoom = '';
@@ -279,6 +280,7 @@ function applyState(s) {
         document.getElementById('g-myteam').textContent = s.teams[myTeamIdx].name;
       }
       showScreen('game');
+      renderGame(s);
     }
     return;
   }
@@ -339,6 +341,7 @@ function renderGame(s) {
     } else {
       btnGet.style.display = 'none';
       answerControls.style.display = '';
+      document.getElementById('turn-score-val').textContent = gs.turnScore || 0;
     }
   } else {
     controls.style.display = 'none';
@@ -377,8 +380,7 @@ function renderGame(s) {
     const pct = Math.round(Math.min(100, (t.pos / parseInt(settings.spaces)) * 100));
     return `<div class="score-box ${i === myTeamIdx ? 'me' : ''}">
       <div class="sname">${i === gs.turn ? '<span class="playing-dot"></span>' : ''}${t.name}</div>
-      <div class="spos">${t.pos} / ${settings.spaces} spaces</div>
-      <div class="sscr">${t.score}</div>
+      <div class="sscr">${t.pos}<span style="font-size:13px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400"> / ${settings.spaces}</span></div>
       <div class="prog"><div class="prog-f" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
