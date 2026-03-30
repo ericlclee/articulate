@@ -1,0 +1,12 @@
+{
+  "name": "articulate-game",
+  "version": "1.0.0",
+  "description": "Multiplayer Articulate game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
