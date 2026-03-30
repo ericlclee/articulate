@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Articulate! Host</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0e0d;--surf:#1c1a17;--surf2:#252220;--bdr:#3a3530;--txt:#f5f0e8;--muted:#9a9080;--acc:#e8a030;--red:#c0392b;--green:#27ae60}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh}
+.nav{background:var(--surf);border-bottom:1px solid var(--bdr);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--acc)}
+.tabs{display:flex;gap:3px}
+.tab{background:none;border:1px solid transparent;padding:6px 14px;border-radius:8px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .12s}
+.tab:hover{color:var(--txt)}
+.tab.on{background:var(--acc);color:#000;font-weight:500}
+.room-pill{background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:500;letter-spacing:2px;cursor:pointer;color:var(--txt)}
+.pg{display:none;padding:18px;max-width:880px;margin:0 auto}
+.pg.on{display:block}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:13px;padding:16px;margin-bottom:12px}
+h3{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-bottom:12px}
+label{font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.4px;display:block;margin-bottom:4px;text-transform:uppercase}
+input,select,textarea{width:100%;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);padding:8px 11px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;margin-bottom:10px}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+select option{background:var(--surf)}
+textarea{resize:vertical;min-height:70px;margin-bottom:10px}
+.btn{padding:9px 18px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:none;color:var(--txt);transition:all .12s}
+.btn:hover{background:var(--surf2)}
+.btn-acc{background:var(--acc);color:#000;border-color:var(--acc)}
+.btn-acc:hover{background:#f0b040}
+.btn-ok{background:#1a3d2a;color:#52c97a;border-color:#2a5a3a}
+.btn-ok:hover{background:#1f4a30}
+.btn-bad{background:#3d1a1a;color:#e85d5d;border-color:#5a2a2a}
+.btn-bad:hover{background:#4a2020}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.col2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sep{height:1px;background:var(--bdr);margin:12px 0}
+.team-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr)}
+.team-row:last-child{border-bottom:none}
+.tdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.tscore{font-family:'Fraunces',serif;font-size:22px;color:var(--acc);min-width:36px;text-align:right}
+.tpos{font-size:12px;color:var(--muted);min-width:70px;text-align:right}
+.active-badge{font-size:11px;background:var(--acc);color:#000;padding:2px 8px;border-radius:20px;font-weight:500}
+.card-display{border:1px solid var(--bdr);border-radius:10px;padding:22px;text-align:center;min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:12px 0}
+.big-word{font-family:'Fraunces',serif;font-size:42px;font-weight:900;line-height:1.1}
+.cat-chip{font-size:11px;padding:2px 10px;border-radius:20px;font-weight:500;margin-bottom:8px;display:inline-block}
+.hint-txt{font-size:13px;color:var(--muted);margin-top:6px}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.ring{position:relative;width:90px;height:90px}
+.ring svg{transform:rotate(-90deg)}
+circle{fill:none;stroke-width:6}
+.tr{stroke:var(--bdr)}
+.tp{stroke:var(--acc);stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s}
+.tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:26px;font-weight:700}
+.tlbl{font-size:11px;color:var(--muted)}
+.ci-list{display:flex;flex-direction:column;gap:5px;max-height:280px;overflow-y:auto}
+.ci{background:var(--surf2);border-radius:8px;padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ci-w{font-weight:500;font-size:13px}
+.ci-c{font-size:11px;color:var(--muted)}
+.ci-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 5px;border-radius:4px}
+.ci-del:hover{color:#e85d5d}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:14px}
+.room-big{font-family:'Fraunces',serif;font-size:52px;font-weight:900;letter-spacing:8px;color:var(--acc);text-align:center;padding:10px 0}
+.room-hint{font-size:13px;color:var(--muted);text-align:center;margin-bottom:14px}
+.winner-box{background:#2a1f00;border:1px solid #6a4f00;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
+.winner-box h2{font-family:'Fraunces',serif;font-size:28px;color:var(--acc)}
+.stat{background:var(--surf2);border-radius:8px;padding:10px 14px;text-align:center}
+.stat .n{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--acc)}
+.stat .l{font-size:11px;color:var(--muted);margin-top:1px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+@media(max-width:580px){.col2{grid-template-columns:1fr}.big-word{font-size:32px}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="logo">Articulate! Host</div>
+  <div class="tabs">
+    <button class="tab on" onclick="showPg('game')">Game</button>
+    <button class="tab" onclick="showPg('cards')">Cards</button>
+    <button class="tab" onclick="showPg('setup')">Setup</button>
+    <button class="tab" onclick="showPg('room')">Room</button>
+  </div>
+  <div class="room-pill" onclick="showPg('room')" id="room-badge">No room</div>
+</nav>
+
+<div class="pg on" id="pg-game">
+  <div id="winner-area"></div>
+  <div class="card">
+    <div id="teams-list"></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:210px">
+        <div class="card-display" id="card-display">
+          <div style="color:var(--muted);font-size:14px">Press "New card" to begin the turn</div>
+        </div>
+        <div class="row" style="justify-content:center;gap:8px;margin-bottom:10px">
+          <button class="btn btn-acc" id="btn-new" onclick="api('new-card')">New card</button>
+          <button class="btn btn-ok" id="btn-yes" onclick="api('correct')" disabled>✓ Correct</button>
+          <button class="btn btn-bad" id="btn-skip" onclick="api('skip')" disabled>Skip</button>
+          <button class="btn" id="btn-end" onclick="api('end-turn')" disabled>End turn</button>
+        </div>
+        <div class="row" style="font-size:12px;color:var(--muted);gap:12px">
+          <span>Deck: <strong id="deck-ct">0</strong></span>
+          <span>Skips: <strong id="skips-ct">—</strong></span>
+          <button class="btn btn-sm" onclick="api('reshuffle')">Reshuffle</button>
+        </div>
+      </div>
+      <div class="timer-wrap">
+        <div class="ring">
+          <svg width="90" height="90" viewBox="0 0 90 90">
+            <circle class="tr" cx="45" cy="45" r="38"/>
+            <circle class="tp" id="tp" cx="45" cy="45" r="38" stroke-dasharray="238.8" stroke-dashoffset="0"/>
+          </svg>
+          <div class="tnum" id="tnum">—</div>
+        </div>
+        <div class="tlbl" id="tlbl">Ready</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pg" id="pg-cards">
+  <div class="col2">
+    <div class="card">
+      <h3>Add card</h3>
+      <label>Word / phrase</label>
+      <input id="cw" placeholder="e.g. Mount Everest" onkeydown="if(event.key==='Enter')addCard()"/>
+      <label>Category</label>
+      <select id="cc"><option>Object</option><option>Action</option><option>World</option><option>Person</option><option>Nature</option><option>Random</option></select>
+      <label>Hint (optional)</label>
+      <input id="ch" placeholder="e.g. Highest mountain"/>
+      <button class="btn btn-acc" style="width:100%;margin-top:2px" onclick="addCard()">Add card</button>
+      <div class="sep"></div>
+      <label>Bulk import (word,category,hint — one per line)</label>
+      <textarea id="bulk" placeholder="Big Ben,World&#10;Swimming,Action&#10;Einstein,Person,German physicist"></textarea>
+      <button class="btn" style="width:100%" onclick="bulkImport()">Import</button>
+    </div>
+    <div class="card">
+      <h3 id="card-ct-title">Cards (0)</h3>
+      <div class="ci-list" id="ci-list"><div class="empty">No cards yet</div></div>
+      <div class="sep"></div>
+      <div class="row">
+        <button class="btn btn-sm" onclick="exportCards()">Export JSON</button>
+        <button class="btn btn-sm" onclick="document.getElementById('imp-f').click()">Import JSON</button>
+        <input type="file" id="imp-f" accept=".json" style="display:none;width:auto;margin:0" onchange="importCards(event)"/>
+        <button class="btn btn-sm" style="color:#e85d5d" onclick="clearCards()">Clear all</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pg" id="pg-setup">
+  <div class="card">
+    <h3>Teams</h3>
+    <div id="teams-setup"></div>
+    <button class="btn btn-sm" style="margin-top:8px" onclick="addTeamRow()">+ Add team</button>
+  </div>
+  <div class="card">
+    <h3>Settings</h3>
+    <div class="col2">
+      <div><label>Timer (seconds)</label><input type="number" id="s-timer" value="60" min="10" max="180"/></div>
+      <div><label>Spaces to win</label><input type="number" id="s-spaces" value="30" min="10" max="60"/></div>
+      <div><label>Skips per turn</label><input type="number" id="s-skips" value="3" min="0" max="10"/></div>
+      <div><label>Spaces per correct</label>
+        <select id="s-move"><option value="1">1 space</option><option value="2">2 spaces</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <button class="btn btn-acc" onclick="saveSetup()">Save &amp; new game</button>
+    <button class="btn" onclick="api('reset').then(()=>toast('Scores reset!'))">Reset scores</button>
+  </div>
+</div>
+
+<div class="pg" id="pg-room">
+  <div class="card" style="text-align:center">
+    <h3>Room code</h3>
+    <div class="room-big" id="room-display">----</div>
+    <div class="room-hint">Teams go to <strong id="team-url">your-app.railway.app/team</strong> and enter this code</div>
+    <div class="row" style="justify-content:center;gap:8px">
+      <button class="btn btn-acc" onclick="createRoom()">Create new room</button>
+      <button class="btn" onclick="copyCode()">Copy code</button>
+    </div>
+  </div>
+  <div class="card" style="margin-top:0">
+    <div style="display:flex;gap:10px">
+      <div class="stat" style="flex:1"><div class="n" id="stat-cards">0</div><div class="l">Cards</div></div>
+      <div class="stat" style="flex:1"><div class="n" id="stat-deck">0</div><div class="l">In deck</div></div>
+      <div class="stat" style="flex:1"><div class="n" id="stat-teams">2</div><div class="l">Teams</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CIRC = 238.8;
+const TCOLORS = ['#4a9eff','#e85d8a','#52c97a','#f5a623','#ff7f50','#b39ddb'];
+const CATCOL = {Object:'#4a9eff',Action:'#e85d8a',World:'#52c97a',Person:'#f5a623',Nature:'#3cd08a',Random:'#c57aff'};
+
+let state = null;
+let localCards = [];
+let timerI = null;
+let timerLeft = 0;
+let timerMax = 60;
+let timerStartedAt = null;
+let setupTeams = [{ name: 'Team 1' }, { name: 'Team 2' }];
+
+async function api(endpoint, body) {
+  try {
+    const res = await fetch('/api/' + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    return res.json();
+  } catch (e) {
+    toast('Connection error');
+  }
+}
+
+function showPg(p) {
+  document.querySelectorAll('.pg, .tab').forEach(e => e.classList.remove('on'));
+  document.getElementById('pg-' + p).classList.add('on');
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.textContent.toLowerCase().includes(p) ||
+      (p === 'game' && t.textContent === 'Game') ||
+      (p === 'cards' && t.textContent === 'Cards') ||
+      (p === 'setup' && t.textContent === 'Setup') ||
+      (p === 'room' && t.textContent === 'Room')) t.classList.add('on');
+  });
+  if (p === 'cards') renderCards();
+  if (p === 'setup') renderSetup();
+  if (p === 'room') renderRoom();
+}
+
+function applyState(s) {
+  state = s;
+  renderGameTab();
+  renderRoom();
+}
+
+function renderGameTab() {
+  if (!state) return;
+  const { teams, settings, gs, currentCard, deckSize } = state;
+
+  // Winner check
+  const w = teams.findIndex(t => t.pos >= parseInt(settings.spaces));
+  const wa = document.getElementById('winner-area');
+  if (w >= 0) {
+    wa.innerHTML = `<div class="winner-box"><h2>🎉 ${teams[w].name} wins!</h2><p style="color:var(--muted);font-size:13px;margin-top:6px">First to ${settings.spaces} spaces!</p><button class="btn btn-sm btn-acc" style="margin-top:10px" onclick="api('reset')">Play again</button></div>`;
+  } else wa.innerHTML = '';
+
+  // Teams
+  document.getElementById('teams-list').innerHTML = teams.map((t, i) => `
+    <div class="team-row">
+      <div class="tdot" style="background:${TCOLORS[i % 6]}"></div>
+      <div style="flex:1;font-weight:500;font-size:14px">${t.name}</div>
+      <div class="tpos">${t.pos} / ${settings.spaces}</div>
+      <div class="tscore">${t.score}</div>
+      ${i === gs.turn ? '<div class="active-badge">Playing</div>' : ''}
+    </div>
+  `).join('');
+
+  // Card
+  const cd = document.getElementById('card-display');
+  if (currentCard) {
+    const col = CATCOL[currentCard.cat] || '#999';
+    cd.innerHTML = `
+      <div class="cat-chip" style="background:${col}22;color:${col}">${currentCard.cat}</div>
+      <div class="big-word">${currentCard.word}</div>
+      ${currentCard.hint ? `<div class="hint-txt">💡 ${currentCard.hint}</div>` : ''}
+    `;
+  } else {
+    cd.innerHTML = '<div style="color:var(--muted);font-size:14px">Press "New card" to begin the turn</div>';
+  }
+
+  // Buttons
+  const hasCard = !!currentCard;
+  document.getElementById('btn-yes').disabled = !hasCard;
+  document.getElementById('btn-skip').disabled = !hasCard;
+  document.getElementById('btn-end').disabled = gs.phase === 'idle' && !hasCard;
+  document.getElementById('btn-new').disabled = hasCard;
+  document.getElementById('deck-ct').textContent = deckSize || 0;
+  document.getElementById('skips-ct').textContent = gs.skipsLeft;
+
+  // Timer
+  timerMax = parseInt(settings.timer);
+  if (gs.phase === 'playing') {
+    const elapsed = Math.floor((Date.now() - state.timestamp) / 1000);
+    timerLeft = Math.max(0, timerMax - elapsed);
+    startClientTimer();
+  } else {
+    stopClientTimer();
+    document.getElementById('tnum').textContent = timerMax;
+    document.getElementById('tlbl').textContent = 'Ready';
+    setTP(1);
+  }
+}
+
+function startClientTimer() {
+  stopClientTimer();
+  renderTimer();
+  timerI = setInterval(() => {
+    timerLeft = Math.max(0, timerLeft - 1);
+    renderTimer();
+    if (timerLeft <= 0) stopClientTimer();
+  }, 1000);
+}
+
+function stopClientTimer() {
+  clearInterval(timerI);
+  timerI = null;
+}
+
+function renderTimer() {
+  document.getElementById('tnum').textContent = timerLeft;
+  setTP(timerLeft / timerMax);
+  document.getElementById('tp').style.stroke = timerLeft <= 10 ? '#e85d8a' : 'var(--acc)';
+  document.getElementById('tlbl').textContent = timerLeft > 0 ? 'Counting down' : "Time's up!";
+}
+
+function setTP(f) {
+  document.getElementById('tp').style.strokeDashoffset = CIRC * (1 - f);
+}
+
+async function createRoom() {
+  const r = await api('create-room');
+  if (r && r.room) {
+    document.getElementById('room-display').textContent = r.room;
+    document.getElementById('room-badge').textContent = r.room;
+    toast('Room created! Share the code.');
+  }
+}
+
+function copyCode() {
+  const code = document.getElementById('room-display').textContent;
+  if (code === '----') { toast('Create a room first!'); return; }
+  navigator.clipboard.writeText(code).then(() => toast('Code copied!')).catch(() => toast(code));
+}
+
+function renderRoom() {
+  if (state) {
+    document.getElementById('room-display').textContent = state.room || '----';
+    document.getElementById('room-badge').textContent = state.room || 'No room';
+    document.getElementById('stat-deck').textContent = state.deckSize || 0;
+    document.getElementById('stat-teams').textContent = state.teams ? state.teams.length : 2;
+  }
+  document.getElementById('stat-cards').textContent = localCards.length;
+  document.getElementById('team-url').textContent = location.origin + '/team';
+}
+
+async function addCard() {
+  const w = document.getElementById('cw').value.trim();
+  if (!w) { toast('Enter a word!'); return; }
+  const card = { word: w, cat: document.getElementById('cc').value, hint: document.getElementById('ch').value.trim() };
+  await fetch('/api/cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(card) });
+  document.getElementById('cw').value = '';
+  document.getElementById('ch').value = '';
+  await loadCards();
+  toast('Card added!');
+}
+
+async function bulkImport() {
+  const lines = document.getElementById('bulk').value.trim().split('\n');
+  const newCards = [];
+  lines.forEach(l => {
+    const p = l.split(',');
+    if (p[0]) newCards.push({ word: p[0].trim(), cat: p[1] ? p[1].trim() : 'Random', hint: p[2] ? p[2].trim() : '' });
+  });
+  if (!newCards.length) { toast('Nothing to import'); return; }
+  await fetch('/api/cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify([...localCards, ...newCards]) });
+  document.getElementById('bulk').value = '';
+  await loadCards();
+  toast(`Imported ${newCards.length} cards!`);
+}
+
+async function deleteCard(i) {
+  localCards.splice(i, 1);
+  await fetch('/api/cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(localCards) });
+  renderCards();
+}
+
+async function clearCards() {
+  if (!confirm('Clear all cards?')) return;
+  await api('cards/clear');
+  await loadCards();
+  toast('Cleared!');
+}
+
+function exportCards() {
+  const b = new Blob([JSON.stringify(localCards, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'articulate-cards.json'; a.click();
+}
+
+async function importCards(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = async ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (Array.isArray(d)) {
+        await fetch('/api/cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify([...localCards, ...d]) });
+        await loadCards();
+        toast(`Imported ${d.length} cards!`);
+      }
+    } catch { toast('Invalid file'); }
+  };
+  r.readAsText(f);
+}
+
+async function loadCards() {
+  const r = await fetch('/api/cards');
+  localCards = await r.json();
+  renderCards();
+  renderRoom();
+}
+
+function renderCards() {
+  document.getElementById('card-ct-title').textContent = `Cards (${localCards.length})`;
+  const el = document.getElementById('ci-list');
+  if (!localCards.length) { el.innerHTML = '<div class="empty">No cards yet</div>'; return; }
+  el.innerHTML = localCards.map((c, i) => `
+    <div class="ci">
+      <div><div class="ci-w">${c.word}</div><div class="ci-c" style="color:${CATCOL[c.cat] || '#999'}">${c.cat}${c.hint ? ' · ' + c.hint : ''}</div></div>
+      <button class="ci-del" onclick="deleteCard(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function renderSetup() {
+  if (state) setupTeams = state.teams.map(t => ({ name: t.name }));
+  const el = document.getElementById('teams-setup');
+  el.innerHTML = setupTeams.map((t, i) => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+      <div class="tdot" style="background:${TCOLORS[i % 6]}"></div>
+      <input type="text" value="${t.name}" id="tn-${i}" style="flex:1;margin:0"/>
+      <button class="btn btn-sm" onclick="removeTeamRow(${i})" ${setupTeams.length <= 2 ? 'disabled' : ''}>✕</button>
+    </div>
+  `).join('');
+  if (state) {
+    document.getElementById('s-timer').value = state.settings.timer;
+    document.getElementById('s-spaces').value = state.settings.spaces;
+    document.getElementById('s-skips').value = state.settings.skips;
+    document.getElementById('s-move').value = state.settings.move;
+  }
+}
+
+function addTeamRow() {
+  if (setupTeams.length >= 6) { toast('Max 6 teams!'); return; }
+  setupTeams.push({ name: `Team ${setupTeams.length + 1}` });
+  renderSetup();
+}
+
+function removeTeamRow(i) {
+  if (setupTeams.length <= 2) { toast('Need at least 2 teams!'); return; }
+  setupTeams.splice(i, 1);
+  renderSetup();
+}
+
+async function saveSetup() {
+  setupTeams.forEach((_, i) => {
+    const e = document.getElementById('tn-' + i);
+    if (e) setupTeams[i].name = e.value || setupTeams[i].name;
+  });
+  const teams = setupTeams.map(t => ({ name: t.name, score: 0, pos: 0 }));
+  const settings = {
+    timer: parseInt(document.getElementById('s-timer').value) || 60,
+    spaces: parseInt(document.getElementById('s-spaces').value) || 30,
+    skips: parseInt(document.getElementById('s-skips').value) || 3,
+    move: parseInt(document.getElementById('s-move').value) || 1
+  };
+  await api('setup', { teams, settings });
+  toast('Saved! New game started.');
+  showPg('game');
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// SSE connection
+function connectSSE() {
+  const es = new EventSource('/events');
+  es.onmessage = e => {
+    try {
+      const d = JSON.parse(e.data);
+      if (d.type === 'state') applyState(d.payload);
+    } catch {}
+  };
+  es.onerror = () => setTimeout(connectSSE, 3000);
+}
+
+connectSSE();
+loadCards();
+fetch('/api/state').then(r => r.json()).then(applyState);
+</script>
+</body>
+</html>
