@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Articulate! Debug</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0e0d;--surf:#1c1a17;--surf2:#252220;--bdr:#3a3530;--txt:#f5f0e8;--muted:#9a9080;--acc:#e8a030}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh}
+.nav{background:var(--surf);border-bottom:1px solid var(--bdr);padding:11px 20px;display:flex;align-items:center;gap:16px}
+.logo{font-family:'Fraunces',serif;font-size:18px;font-weight:900;color:var(--acc)}
+.badge{font-size:11px;background:#3d1a1a;color:#e85d5d;border:1px solid #5a2a2a;border-radius:20px;padding:2px 10px;font-weight:600;letter-spacing:.3px}
+.main{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px;max-width:1100px;margin:0 auto}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:13px;padding:16px;margin-bottom:0}
+h3{font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:12px;color:var(--acc)}
+h4{font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:14px}
+h4:first-child{margin-top:0}
+.btn{padding:7px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border:none;background:var(--surf2);color:var(--txt);transition:all .12s;width:100%;margin-bottom:5px;text-align:left}
+.btn:hover{background:#302c28}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-warn{background:#3d2e00;color:#e8a030}
+.btn-warn:hover{background:#4a3800}
+.btn-bad{background:#3d1a1a;color:#e85d5d}
+.btn-bad:hover{background:#4a2020}
+.btn-ok{background:#1a3d2a;color:#52c97a}
+.btn-ok:hover{background:#1f4a30}
+.btn-purple{background:#2a1f40;color:#c57aff}
+.btn-purple:hover{background:#352850}
+input,select{width:100%;background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;color:var(--txt);padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:6px}
+input:focus,select:focus{border-color:var(--acc)}
+select option{background:var(--surf)}
+.row{display:flex;gap:6px}
+.row .btn{margin-bottom:0}
+.row input{margin-bottom:0}
+.sep{height:1px;background:var(--bdr);margin:12px 0}
+
+/* State viewer */
+.state-wrap{grid-column:1/-1}
+.state-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.conn-dot{width:8px;height:8px;border-radius:50%;background:#e85d5d;display:inline-block;margin-right:6px;transition:background .3s;vertical-align:middle}
+.conn-dot.ok{background:#52c97a}
+.state-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.stat-box{background:var(--surf2);border-radius:8px;padding:10px 12px}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.stat-val{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--acc)}
+.stat-val.small{font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;color:var(--txt)}
+pre{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:12px;font-size:11px;overflow:auto;max-height:340px;line-height:1.5;color:#b0a898;white-space:pre-wrap;word-break:break-all}
+
+/* Log */
+.log{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:10px;font-size:11px;max-height:180px;overflow-y:auto;font-family:monospace;line-height:1.6}
+.log-entry{border-bottom:1px solid var(--bdr);padding:2px 0}
+.log-entry:last-child{border-bottom:none}
+.log-time{color:var(--muted);margin-right:6px}
+.log-ok{color:#52c97a}
+.log-err{color:#e85d5d}
+.log-info{color:#e8a030}
+
+/* Teams table */
+.teams-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.teams-table th{text-align:left;font-size:10px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);padding:5px 8px;border-bottom:1px solid var(--bdr)}
+.teams-table td{padding:6px 8px;border-bottom:1px solid var(--bdr);vertical-align:top}
+.teams-table tr:last-child td{border-bottom:none}
+.teams-table tr.active-row td{background:rgba(232,160,48,.06)}
+.status-pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.3px}
+.status-idle{background:var(--surf2);color:var(--muted)}
+.status-pre-turn{background:#1a3d2a;color:#52c97a}
+.status-guessing{background:#1a3060;color:#4a9eff}
+.status-post-turn{background:#2a1f40;color:#c57aff}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="logo">Articulate!</div>
+  <div class="badge">Debug Mode</div>
+  <span style="font-size:12px;color:var(--muted);margin-left:auto">
+    <span class="conn-dot" id="conn-dot"></span><span id="conn-lbl">Connecting…</span>
+  </span>
+</div>
+
+<div class="main">
+
+  <!-- State overview -->
+  <div class="card state-wrap">
+    <div class="state-header">
+      <h3 style="margin:0">Live State</h3>
+      <button class="btn" style="width:auto;font-size:11px;padding:4px 10px" onclick="toggleRaw()">Toggle raw JSON</button>
+    </div>
+    <div class="state-grid" id="stat-grid"></div>
+    <pre id="raw-state" style="display:none"></pre>
+  </div>
+
+  <!-- Teams table -->
+  <div class="card state-wrap">
+    <h3>Teams</h3>
+    <table class="teams-table" id="teams-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Pos</th>
+          <th>Connected</th>
+          <th>Active effect</th>
+          <th>Pending effect</th>
+        </tr>
+      </thead>
+      <tbody id="teams-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Game flow -->
+  <div class="card">
+    <h3>Game Flow</h3>
+
+    <h4>Room</h4>
+    <button class="btn btn-warn" onclick="act('create-room')">Create new room</button>
+    <button class="btn btn-bad" onclick="act('reset')">Reset scores</button>
+
+    <h4>Turn</h4>
+    <button class="btn btn-ok" onclick="act('new-card')">Draw card (start turn)</button>
+    <button class="btn btn-ok" onclick="act('correct')">Mark correct</button>
+    <button class="btn btn-warn" onclick="act('end-turn')">End turn</button>
+    <button class="btn btn-warn" onclick="act('skip-turn')">Skip turn</button>
+    <button class="btn" onclick="act('undo-turn')">Undo turn</button>
+
+    <h4>Start game</h4>
+    <button class="btn btn-ok" onclick="act('start-game')">Start game</button>
+  </div>
+
+  <!-- Team controls -->
+  <div class="card">
+    <h3>Teams</h3>
+
+    <h4>Add test team</h4>
+    <input id="new-team-name" placeholder="Team name" />
+    <input id="new-team-room" placeholder="Room code" />
+    <button class="btn btn-ok" onclick="addTestTeam()">Join as team</button>
+
+    <div class="sep"></div>
+
+    <h4>Set team position</h4>
+    <select id="team-sel"></select>
+    <div class="row">
+      <input id="team-pos" type="number" min="1" placeholder="Position" style="margin-bottom:0"/>
+      <button class="btn btn-warn" onclick="setPos()" style="width:auto;white-space:nowrap">Set pos</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <h4>Force turn</h4>
+    <select id="turn-team-sel"></select>
+    <button class="btn btn-warn" onclick="forceTurn()">Force this team's turn</button>
+  </div>
+
+  <!-- Cards & events -->
+  <div class="card">
+    <h3>Cards &amp; Events</h3>
+
+    <h4>Effect cards</h4>
+    <button class="btn btn-purple" onclick="act('draw-effect')">Draw effect card</button>
+    <button class="btn btn-purple" onclick="act('advance-turn')">Advance turn (after effect)</button>
+
+    <div class="sep"></div>
+
+    <h4>Modal</h4>
+    <input id="modal-eyebrow-in" placeholder="Eyebrow (e.g. Event)" value="Event"/>
+    <input id="modal-title-in" placeholder="Title" value="Test Announcement"/>
+    <input id="modal-body-in" placeholder="Body text" value="This is a test modal triggered from debug."/>
+    <button class="btn btn-purple" onclick="triggerModal()">Show modal on this page</button>
+  </div>
+
+  <!-- Action log -->
+  <div class="card state-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <h3 style="margin:0">Action Log</h3>
+      <button class="btn" style="width:auto;font-size:11px;padding:4px 10px" onclick="clearLog()">Clear</button>
+    </div>
+    <div class="log" id="log"></div>
+  </div>
+
+</div>
+
+<!-- Modal (same as host/team for testing) -->
+<div id="modal-backdrop" style="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s" onclick="dismissModal()">
+  <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:32px 28px;max-width:420px;width:90%;text-align:center;transform:scale(.95);transition:transform .2s" id="modal-inner" onclick="event.stopPropagation()">
+    <div id="modal-eyebrow" style="font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px"></div>
+    <div id="modal-title" style="font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:var(--acc);margin-bottom:10px"></div>
+    <div id="modal-body" style="font-size:16px;font-weight:500;color:var(--txt);line-height:1.5;margin-bottom:24px"></div>
+    <div style="font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="dismissModal()">Dismiss</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let state = null;
+let es = null;
+let showRaw = false;
+
+// SSE
+function connect() {
+  if (es) es.close();
+  es = new EventSource('/events');
+  es.onopen = () => setConn(true);
+  es.onmessage = e => {
+    setConn(true);
+    try {
+      const d = JSON.parse(e.data);
+      if (d.type === 'state') { state = d.payload; renderState(); }
+    } catch {}
+  };
+  es.onerror = () => { setConn(false); setTimeout(connect, 3000); };
+}
+
+function setConn(ok) {
+  document.getElementById('conn-dot').className = 'conn-dot' + (ok ? ' ok' : '');
+  document.getElementById('conn-lbl').textContent = ok ? 'Connected' : 'Reconnecting…';
+}
+
+// Render state overview
+function renderState() {
+  if (!state) return;
+  const { phase, room, teams, gs, settings, currentCard, deckSize } = state;
+
+  const activeTeam = teams[gs.turn];
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-box"><div class="stat-label">Phase</div><div class="stat-val small">${phase} / ${gs.phase}</div></div>
+    <div class="stat-box"><div class="stat-label">Room</div><div class="stat-val small">${room || '—'}</div></div>
+    <div class="stat-box"><div class="stat-label">Teams</div><div class="stat-val">${teams.length}</div></div>
+    <div class="stat-box"><div class="stat-label">Active team</div><div class="stat-val small">${activeTeam ? activeTeam.name : '—'}</div></div>
+    <div class="stat-box"><div class="stat-label">Turn score</div><div class="stat-val">${gs.turnScore ?? 0}</div></div>
+    <div class="stat-box"><div class="stat-label">Deck size</div><div class="stat-val">${deckSize ?? 0}</div></div>
+    <div class="stat-box"><div class="stat-label">Current card</div><div class="stat-val small">${currentCard ? `${currentCard.word} (${currentCard.cat})` : '—'}</div></div>
+    <div class="stat-box"><div class="stat-label">Timer</div><div class="stat-val small">${settings.timer}s</div></div>
+    <div class="stat-box"><div class="stat-label">Spaces to win</div><div class="stat-val">${settings.spaces}</div></div>
+  `;
+
+  if (showRaw) document.getElementById('raw-state').textContent = JSON.stringify(state, null, 2);
+
+  // Teams table
+  document.getElementById('teams-tbody').innerHTML = teams.length ? teams.map((t, i) => {
+    const isActive = i === gs.turn;
+    const statusClass = `status-${t.status || 'idle'}`;
+    return `<tr class="${isActive ? 'active-row' : ''}">
+      <td><strong>${t.name}</strong>${isActive ? ' <span style="color:var(--acc);font-size:10px">▶</span>' : ''}</td>
+      <td><span class="status-pill ${statusClass}">${t.status || 'idle'}</span></td>
+      <td>${t.pos}</td>
+      <td style="color:${t.connected ? '#52c97a' : '#e85d5d'}">${t.connected ? 'yes' : 'no'}</td>
+      <td style="color:${t.activeEffect ? '#c57aff' : 'var(--muted)'}">${t.activeEffect ? t.activeEffect.text : '—'}</td>
+      <td style="color:${t.pendingEffect ? '#e8a030' : 'var(--muted)'}">${t.pendingEffect ? 'yes' : 'no'}</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:14px">No teams</td></tr>';
+
+  // Update team selects
+  const opts = teams.map((t, i) => `<option value="${i}">${t.name} (pos ${t.pos})</option>`).join('');
+  document.getElementById('team-sel').innerHTML = opts || '<option>No teams</option>';
+  document.getElementById('turn-team-sel').innerHTML = opts || '<option>No teams</option>';
+}
+
+function toggleRaw() {
+  showRaw = !showRaw;
+  const el = document.getElementById('raw-state');
+  el.style.display = showRaw ? '' : 'none';
+  if (showRaw && state) el.textContent = JSON.stringify(state, null, 2);
+}
+
+// Generic API call
+async function act(endpoint, body) {
+  const method = endpoint === 'state' ? 'GET' : 'POST';
+  try {
+    const r = await fetch('/api/' + endpoint, {
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : {},
+      body: body ? JSON.stringify(body) : undefined
+    });
+    const d = await r.json();
+    log(endpoint, d.error ? 'err' : 'ok', d.error || JSON.stringify(d));
+    if (d.error) toast(d.error);
+  } catch (e) {
+    log(endpoint, 'err', e.message);
+    toast('Request failed');
+  }
+}
+
+// Team actions
+async function addTestTeam() {
+  const name = document.getElementById('new-team-name').value.trim();
+  const room = document.getElementById('new-team-room').value.trim().toUpperCase();
+  if (!name || !room) { toast('Enter name and room code'); return; }
+  await act('join-team', { room, name });
+}
+
+async function setPos() {
+  const idx = parseInt(document.getElementById('team-sel').value);
+  const pos = parseInt(document.getElementById('team-pos').value);
+  if (isNaN(idx) || isNaN(pos)) { toast('Select a team and enter a position'); return; }
+  await act('set-pos', { teamIdx: idx, pos });
+}
+
+async function forceTurn() {
+  if (!state) return;
+  const idx = parseInt(document.getElementById('turn-team-sel').value);
+  if (isNaN(idx)) return;
+  // Directly patch via set-pos isn't enough — use skip-turn repeatedly or set gs directly
+  // For now: tell user what turn index we need, and call skip-turn until we get there
+  const current = state.gs.turn;
+  const teams = state.teams.length;
+  if (current === idx) { toast('Already that team\'s turn'); return; }
+  const steps = ((idx - current) + teams) % teams;
+  for (let i = 0; i < steps; i++) await act('skip-turn');
+  log('force-turn', 'info', `Skipped ${steps} turn(s) to reach team ${idx}`);
+}
+
+// Modal test
+function triggerModal() {
+  const eyebrow = document.getElementById('modal-eyebrow-in').value;
+  const title = document.getElementById('modal-title-in').value;
+  const body = document.getElementById('modal-body-in').value;
+  showModal(eyebrow, title, body);
+  log('show-modal', 'info', `"${title}"`);
+}
+
+function showModal(eyebrow, title, body) {
+  document.getElementById('modal-eyebrow').textContent = eyebrow;
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  const bd = document.getElementById('modal-backdrop');
+  bd.style.opacity = '1';
+  bd.style.pointerEvents = 'all';
+  document.getElementById('modal-inner').style.transform = 'scale(1)';
+}
+
+function dismissModal() {
+  const bd = document.getElementById('modal-backdrop');
+  bd.style.opacity = '0';
+  bd.style.pointerEvents = 'none';
+  document.getElementById('modal-inner').style.transform = 'scale(.95)';
+}
+
+// Log
+function log(action, type, detail) {
+  const el = document.getElementById('log');
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const cls = type === 'ok' ? 'log-ok' : type === 'err' ? 'log-err' : 'log-info';
+  el.insertAdjacentHTML('afterbegin', `
+    <div class="log-entry">
+      <span class="log-time">${time}</span>
+      <span class="${cls}">${action}</span>
+      <span style="color:var(--muted);margin-left:6px">${detail}</span>
+    </div>
+  `);
+}
+
+function clearLog() { document.getElementById('log').innerHTML = ''; }
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+connect();
+</script>
+</body>
+</html>

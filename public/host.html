@@ -30,15 +30,15 @@ input,select,textarea{width:100%;background:var(--surf2);border:1px solid var(--
 input:focus,select:focus,textarea:focus{border-color:var(--acc)}
 select option{background:var(--surf)}
 textarea{resize:vertical;min-height:70px}
-.btn{padding:9px 18px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:none;color:var(--txt);transition:all .12s}
-.btn:hover{background:var(--surf2)}
-.btn-acc{background:var(--acc);color:#000;border-color:var(--acc)}
+.btn{padding:9px 18px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;background:var(--surf2);color:var(--txt);transition:all .12s}
+.btn:hover{background:#302c28}
+.btn-acc{background:var(--acc);color:#000}
 .btn-acc:hover{background:#f0b040}
-.btn-ok{background:#1a3d2a;color:#52c97a;border-color:#2a5a3a}
+.btn-ok{background:#1a3d2a;color:#52c97a}
 .btn-ok:hover{background:#1f4a30}
-.btn-bad{background:#3d1a1a;color:#e85d5d;border-color:#5a2a2a}
+.btn-bad{background:#3d1a1a;color:#e85d5d}
 .btn-bad:hover{background:#4a2020}
-.btn-warn{background:#3d2e00;color:#e8a030;border-color:#5a4500}
+.btn-warn{background:#3d2e00;color:#e8a030}
 .btn-warn:hover{background:#4a3800}
 .btn-sm{padding:6px 12px;font-size:12px}
 .btn:disabled{opacity:.35;cursor:not-allowed}
@@ -54,8 +54,6 @@ textarea{resize:vertical;min-height:70px}
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:14px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
-.winner-box{background:#2a1f00;border:1px solid #6a4f00;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
-.winner-box h2{font-family:'Fraunces',serif;font-size:28px;color:var(--acc)}
 
 /* Lobby */
 .room-big{font-family:'Fraunces',serif;font-size:56px;font-weight:900;letter-spacing:10px;color:var(--acc);text-align:center;padding:10px 0}
@@ -69,14 +67,16 @@ textarea{resize:vertical;min-height:70px}
 .board-wrap{overflow-x:auto;padding:8px 0;display:flex;justify-content:center}
 .board-row{display:flex;gap:3px;margin-bottom:3px}
 .tile-active{box-shadow:0 0 0 2.5px var(--acc),0 0 10px 2px rgba(232,160,48,.35) !important;z-index:1}
+.tile-drag-over{box-shadow:0 0 0 2px #fff !important;z-index:2}
 .tile{width:var(--tile-sz,52px);height:var(--tile-sz,52px);border-radius:7px;border:1.5px solid var(--bdr);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;flex-shrink:0;cursor:default}
-.tile-num{font-size:var(--tile-num-sz,9px);color:var(--muted);position:absolute;top:3px;left:4px;font-weight:500}
+.tile-num{font-size:var(--tile-num-sz,9px);color:#000;position:absolute;top:3px;left:4px;font-weight:500}
 .tile-tokens{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;max-width:var(--tokens-max,44px);margin-top:4px}
 .token{width:var(--token-sz,18px);height:var(--token-sz,18px);border-radius:50%;font-size:var(--token-font,8px);font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;border:1.5px solid rgba(0,0,0,.3);transition:transform .2s}
 .token-active{border-color:rgba(255,255,255,0.9)}
 .tile-start{background:var(--surf2) !important}
 .tile-start .tile-num{font-size:8px}
 .tile-win{border-color:#f5a623 !important}
+.tile-effect-icon{position:absolute;bottom:2px;right:3px;font-size:var(--tile-num-sz,9px);line-height:1;opacity:.85}
 
 /* Current turn panel */
 .turn-panel{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;margin-bottom:12px}
@@ -105,6 +105,19 @@ circle{fill:none;stroke-width:6}
 .tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:20px;font-weight:700}
 
 @media(max-width:580px){.col2{grid-template-columns:1fr}.tile{width:40px;height:40px}.token{width:14px;height:14px;font-size:7px}}
+
+/* Announcement modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-backdrop.show{opacity:1;pointer-events:all}
+.modal{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:32px 28px;max-width:420px;width:90%;text-align:center;transform:scale(.95);transition:transform .2s;position:relative}
+.modal-close{position:absolute;top:12px;right:16px;font-size:20px;color:var(--muted);cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--txt)}
+.modal-backdrop.show .modal{transform:scale(1)}
+.modal-eyebrow{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.modal-title{font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:var(--acc);margin-bottom:10px}
+.modal-body{font-size:16px;font-weight:500;color:var(--txt);line-height:1.5;margin-bottom:24px}
+.modal-dismiss{font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.modal-dismiss:hover{color:var(--txt)}
 </style>
 </head>
 <body>
@@ -145,17 +158,17 @@ circle{fill:none;stroke-width:6}
 
   <!-- ACTIVE GAME VIEW -->
   <div id="game-view" style="display:none">
-    <div id="winner-area"></div>
 
     <!-- Turn info + timer + debug -->
     <div class="turn-panel">
-      <div class="card" style="flex:2;min-width:260px">
+      <div class="card" style="flex:2;min-width:260px;display:flex;flex-direction:column">
         <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Current turn</div>
         <div style="font-size:18px;font-weight:600;margin-bottom:6px" id="turn-team">—</div>
         <div id="turn-status" style="font-size:13px;color:var(--muted)">Waiting</div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:10px">
-          <div id="cur-cat" style="display:none"></div>
-        </div>
+        <div id="turn-score-host" style="display:none;margin-top:6px;font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--acc)"></div>
+<div style="flex:1"></div>
+        <div id="active-effect-host" style="display:none;font-size:12px;color:#c57aff;margin-bottom:4px"></div>
+        <div id="cur-cat" style="display:none"></div>
       </div>
       <div class="card" style="display:flex;align-items:center;justify-content:center;padding:14px">
         <div>
@@ -202,13 +215,12 @@ circle{fill:none;stroke-width:6}
       <label>Word / phrase</label>
       <input id="cw" placeholder="e.g. Mount Everest" onkeydown="if(event.key==='Enter')addCard()"/>
       <label>Category</label>
-      <select id="cc"><option>Object</option><option>Action</option><option>World</option><option>Person</option><option>Nature</option><option>Random</option></select>
-      <label>Hint (optional)</label>
-      <input id="ch" placeholder="e.g. Highest mountain"/>
+      <input id="cc" list="cc-list" placeholder="e.g. Object" autocomplete="off"/>
+      <datalist id="cc-list"></datalist>
       <button class="btn btn-acc" style="width:100%;margin-top:2px" onclick="addCard()">Add card</button>
       <div class="sep"></div>
-      <label>Bulk import (word,category,hint — one per line)</label>
-      <textarea id="bulk" placeholder="Big Ben,World&#10;Swimming,Action&#10;Einstein,Person,German physicist"></textarea>
+      <label>Bulk import (word,category — one per line)</label>
+      <textarea id="bulk" placeholder="Big Ben,World&#10;Swimming,Action&#10;Einstein,Person"></textarea>
       <button class="btn" style="width:100%" onclick="bulkImport()">Import</button>
     </div>
     <div class="card">
@@ -223,6 +235,54 @@ circle{fill:none;stroke-width:6}
       </div>
     </div>
   </div>
+  <div class="sep" style="margin:16px 0"></div>
+  <div class="col2">
+    <div class="card">
+      <h3>Add effect card</h3>
+      <label>Effect text</label>
+      <input id="ef" placeholder="e.g. Speak in an accent" onkeydown="if(event.key==='Enter')addEffect()"/>
+      <button class="btn btn-acc" style="width:100%;margin-top:2px" onclick="addEffect()">Add effect card</button>
+      <div class="sep"></div>
+      <label>Bulk import (one effect per line)</label>
+      <textarea id="bulk-ef" placeholder="Speak in an accent&#10;No hands allowed&#10;Must whisper"></textarea>
+      <button class="btn" style="width:100%" onclick="bulkImportEffect()">Import</button>
+    </div>
+    <div class="card">
+      <h3 id="effect-ct-title">Effect cards (0)</h3>
+      <div class="ci-list" id="effect-list"><div class="empty">No effect cards yet</div></div>
+      <div class="sep"></div>
+      <div class="row">
+        <button class="btn btn-sm" onclick="exportEffectCards()">Export JSON</button>
+        <button class="btn btn-sm" onclick="document.getElementById('imp-effect-f').click()">Import JSON</button>
+        <input type="file" id="imp-effect-f" accept=".json" style="display:none;width:auto;margin:0" onchange="importEffectCards(event)"/>
+        <button class="btn btn-sm" style="color:#e85d5d" onclick="clearEffectCards()">Clear all</button>
+      </div>
+    </div>
+  </div>
+  <div class="sep" style="margin:16px 0"></div>
+  <div class="col2">
+    <div class="card">
+      <h3>Add event card</h3>
+      <label>Event text</label>
+      <input id="ew" placeholder="e.g. Swap team members" onkeydown="if(event.key==='Enter')addEvent()"/>
+      <button class="btn btn-acc" style="width:100%;margin-top:2px" onclick="addEvent()">Add event card</button>
+      <div class="sep"></div>
+      <label>Bulk import (one event per line)</label>
+      <textarea id="bulk-event" placeholder="Swap team members&#10;All teams move back 2 spaces"></textarea>
+      <button class="btn" style="width:100%" onclick="bulkImportEvent()">Import</button>
+    </div>
+    <div class="card">
+      <h3 id="event-ct-title">Event cards (0)</h3>
+      <div class="ci-list" id="event-list"><div class="empty">No event cards yet</div></div>
+      <div class="sep"></div>
+      <div class="row">
+        <button class="btn btn-sm" onclick="exportEventCards()">Export JSON</button>
+        <button class="btn btn-sm" onclick="document.getElementById('imp-event-f').click()">Import JSON</button>
+        <input type="file" id="imp-event-f" accept=".json" style="display:none;width:auto;margin:0" onchange="importEventCards(event)"/>
+        <button class="btn btn-sm" style="color:#e85d5d" onclick="clearEventCards()">Clear all</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- SETTINGS TAB -->
@@ -232,8 +292,25 @@ circle{fill:none;stroke-width:6}
     <div class="col2">
       <div><label>Timer (seconds)</label><input type="number" id="s-timer" value="60" min="10" max="300"/></div>
       <div><label>Spaces to win</label><input type="number" id="s-spaces" value="49" min="5" max="60"/></div>
+      <div><label>Skips per turn</label><input type="number" id="s-skips" value="1" min="0" max="10"/></div>
+      <div><label>Spaces per Effect tile</label><input type="number" id="s-eff" value="0" min="0" max="20"/></div>
+      <div><label>Event frequency (<span id="s-event-val">0</span>)</label><input type="range" id="s-event" value="0" min="0" max="10" step="1" oninput="document.getElementById('s-event-val').textContent=this.value" style="border:none;padding:0"/></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+        <input type="checkbox" id="s-event-hidden" checked style="width:auto;margin:0"/>
+        <label for="s-event-hidden" style="margin:0;text-transform:none;letter-spacing:0;font-size:13px">Hide event tiles on board</label>
+      </div>
     </div>
     <button class="btn btn-acc" onclick="saveSettings()">Save settings</button>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop" onclick="dismissModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-close" onclick="dismissModal()">&times;</div>
+    <div class="modal-eyebrow" id="modal-eyebrow"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div id="modal-actions"></div>
   </div>
 </div>
 
@@ -242,8 +319,8 @@ circle{fill:none;stroke-width:6}
 <script>
 const CIRC = 182.2;
 const TCOLORS = ['#4a9eff','#e85d8a','#52c97a','#f5a623','#ff7f50','#b39ddb'];
-const CATS = ['Object','Action','World','Person','Nature','Random'];
-const CAT_COL = {Object:'#4a9eff',Action:'#ff6b6b',World:'#52c97a',Person:'#f5a623',Nature:'#26c6da',Random:'#c57aff'};
+let CATS = [];
+let CAT_COL = {};
 
 let state = null;
 let localCards = [];
@@ -270,7 +347,7 @@ function showPg(p) {
         (p === 'cards' && t.textContent === 'Cards') ||
         (p === 'settings' && t.textContent === 'Settings')) t.classList.add('on');
   });
-  if (p === 'cards') renderCards();
+  if (p === 'cards') { renderCards(); renderEffectCards(); renderEventCards(); }
 }
 
 function applyState(s) {
@@ -308,17 +385,18 @@ function renderLobby(s) {
   `).join('');
 }
 
+let prevPhase = null;
 function renderGame(s) {
   const { teams, settings, gs, currentCard, phase } = s;
 
   // Winner
-  const wa = document.getElementById('winner-area');
-  if (phase === 'done') {
+  if (phase === 'done' && prevPhase !== 'done') {
     const w = teams.find(t => t.pos >= parseInt(settings.spaces));
-    wa.innerHTML = w
-      ? `<div class="winner-box"><h2>${w.name} wins!</h2><p style="color:var(--muted);font-size:13px;margin-top:6px">First to ${settings.spaces} spaces!</p><button class="btn btn-sm btn-acc" style="margin-top:10px" onclick="api('reset')">Play again</button></div>`
-      : '';
-  } else wa.innerHTML = '';
+    showModal('Game over', `${w ? w.name : 'A team'} wins!`, `First to reach ${settings.spaces} spaces!`,
+      `<button class="btn btn-acc" style="margin-top:8px" onclick="api('reset');dismissModal()">Play again</button>`);
+  }
+  if (phase !== 'done' && prevPhase === 'done') dismissModal();
+  prevPhase = phase;
 
   // Turn panel
   const activeTeam = teams[gs.turn];
@@ -328,12 +406,33 @@ function renderGame(s) {
   const cat = CATS[((catPos - 1) % CATS.length + CATS.length) % CATS.length];
   const catEl = document.getElementById('cur-cat');
   catEl.style.display = '';
-  catEl.innerHTML = `<span class="cat-chip" style="background:${CAT_COL[cat]}22;color:${CAT_COL[cat]}">${cat}</span>`;
+  catEl.innerHTML = `<span style="font-size:12px;color:var(--muted)">Currently describing: </span><span class="cat-chip" style="background:${CAT_COL[cat]}22;color:${CAT_COL[cat]}">${cat}</span>`;
+
+  const effectEl = document.getElementById('active-effect-host');
+  if (activeTeam && activeTeam.activeEffect) {
+    effectEl.style.display = '';
+    effectEl.textContent = `🎲 Active effect: ${activeTeam.activeEffect.text}`;
+  } else {
+    effectEl.style.display = 'none';
+  }
 
   if (gs.phase === 'playing') {
-    document.getElementById('turn-status').textContent = `${activeTeam ? activeTeam.name : 'Team'} is guessing… (${gs.turnScore || 0} this turn)`;
+    document.getElementById('turn-status').textContent = `${activeTeam ? activeTeam.name : 'Team'} is guessing…`;
+    document.getElementById('turn-score-host').style.display = '';
+    document.getElementById('turn-score-host').textContent = `${gs.turnScore || 0} this turn`;
+  } else if (gs.phase === 'between-turns') {
+    const name = activeTeam ? activeTeam.name : 'Team';
+    if (activeTeam && activeTeam.pendingEffect) {
+      document.getElementById('turn-status').textContent = `🎲 ${name} landed on an effect tile — waiting for draw…`;
+    } else if (activeTeam && activeTeam.activeEffect) {
+      document.getElementById('turn-status').textContent = `🎲 ${name} drew: ${activeTeam.activeEffect.text}`;
+    } else {
+      document.getElementById('turn-status').textContent = `${name}'s turn ended — advancing…`;
+    }
+    document.getElementById('turn-score-host').style.display = 'none';
   } else {
     document.getElementById('turn-status').textContent = 'Waiting for team to get a card';
+    document.getElementById('turn-score-host').style.display = 'none';
   }
 
   // Timer
@@ -349,6 +448,13 @@ function renderGame(s) {
     setTP(1);
   }
 
+  // Event announcement
+  if (s.activeEvent) {
+    const teamName = activeTeam ? activeTeam.name : 'A team';
+    showModal('⚡ Event', `${teamName} triggered an event!`, s.activeEvent.text,
+      `<button class="btn btn-acc" style="margin-top:8px" onclick="api('dismiss-event');dismissModal()">Dismiss</button>`);
+  }
+
   // Board
   renderBoard(s);
 
@@ -357,26 +463,38 @@ function renderGame(s) {
 function renderBoard(s) {
   const { teams, settings, gs } = s;
   const spaces = parseInt(settings.spaces);
+  const effectInterval = parseInt((s.settings && s.settings.effectInterval) || 0);
+  const eventTiles = s.eventTiles || [];
+  const usedEventTiles = s.eventTilesUsed || [];
 
-  // Build tile list: 1..spaces, all coloured
   const tiles = [];
   for (let i = 1; i <= spaces; i++) {
-    const cat = CATS[(i - 1) % CATS.length];
+    const cat = CATS.length ? CATS[(i - 1) % CATS.length] : null;
     tiles.push({ pos: i, cat });
   }
 
-  // Rows sized to approximate a square grid
-  const ROW = Math.ceil(Math.sqrt(spaces));
-  const numRows = Math.ceil(spaces / ROW);
   const GAP = 3;
   const boardCard = document.getElementById('board-card');
   const headerEl = boardCard.querySelector(':scope > div');
   const headerH = headerEl ? headerEl.offsetHeight + 10 : 50;
   const availW = boardCard.clientWidth - 32;
   const availH = (boardCard.clientHeight || boardCard.clientWidth) - 32 - headerH - 20;
-  const tileFromW = Math.floor((availW - GAP * (ROW - 1)) / ROW);
-  const tileFromH = Math.floor((availH - GAP * (numRows - 1)) / numRows);
-  const tileSize = Math.max(28, Math.min(tileFromW, tileFromH));
+
+  // Solve tile size and ROW together: shrink tile size until everything fits vertically.
+  // Each group is: 1 straight row (ROW tiles) + 1 connector row, except the last group.
+  let tileSize = Math.floor((availW + GAP) / (Math.ceil(Math.sqrt(spaces)) + GAP));
+  tileSize = Math.max(28, tileSize);
+  let ROW;
+  for (let attempt = 0; attempt < 60; attempt++) {
+    ROW = Math.max(2, Math.floor((availW + GAP) / (tileSize + GAP)));
+    const numStraight = Math.ceil(spaces / ROW);
+    const numConnectors = numStraight - 1; // one between each pair of straight rows
+    const totalRows = numStraight + numConnectors;
+    const neededH = totalRows * tileSize + (totalRows - 1) * GAP;
+    if (neededH <= availH) break;
+    tileSize--;
+  }
+
   const tokenSize = Math.max(12, Math.round(tileSize * 0.35));
   const root = document.documentElement;
   root.style.setProperty('--tile-sz', tileSize + 'px');
@@ -384,35 +502,58 @@ function renderBoard(s) {
   root.style.setProperty('--tokens-max', (tileSize - 8) + 'px');
   root.style.setProperty('--token-sz', tokenSize + 'px');
   root.style.setProperty('--token-font', Math.max(6, Math.round(tokenSize * 0.45)) + 'px');
-  const rows = [];
-  for (let r = 0; r * ROW < tiles.length; r++) {
-    const slice = tiles.slice(r * ROW, r * ROW + ROW);
-    rows.push(r % 2 === 1 ? [...slice].reverse() : slice);
+
+  // Build segments: straight row (ROW tiles) then single connector tile alternating right/left
+  // Pattern: [straight L→R] [connector right] [straight R→L] [connector left] ...
+  const segments = [];
+  let ti = 0, goRight = true;
+  while (ti < tiles.length) {
+    const chunk = tiles.slice(ti, ti + ROW);
+    segments.push({ type: 'straight', tiles: goRight ? chunk : [...chunk].reverse(), goRight });
+    ti += chunk.length;
+    if (ti < tiles.length) {
+      segments.push({ type: 'connector', tile: tiles[ti], align: goRight ? 'flex-end' : 'flex-start' });
+      ti++;
+      goRight = !goRight;
+    }
   }
 
   // Legend
   document.getElementById('cat-legend').innerHTML = CATS.map(c =>
     `<div class="leg-item"><div class="leg-dot" style="background:${CAT_COL[c]}"></div>${c}</div>`
-  ).join('');
+  ).join('') || '<span style="font-size:11px;color:var(--muted)">No cards loaded</span>';
 
-  // Render
-  document.getElementById('board').innerHTML = rows.map(row =>
-    `<div class="board-row">${row.map(tile => {
-      const teamsHere = teams.map((t, i) => ({ ...t, i })).filter(t => t.pos === tile.pos);
-      const col = tile.cat ? CAT_COL[tile.cat] : null;
-      const isActive = teamsHere.some(t => t.i === gs.turn);
-      const isWin = tile.pos === spaces;
-      const bg = `${col}45`;
-      const border = isWin ? '#f5a623' : 'var(--bdr)';
-      const tokens = teamsHere.map(t =>
-        `<div class="token${t.i === gs.turn ? ' token-active' : ''}" style="background:${TCOLORS[t.i % 6]}" title="${t.name}">${t.name[0].toUpperCase()}</div>`
-      ).join('');
-      return `<div class="tile${isWin ? ' tile-win' : ''}${isActive ? ' tile-active' : ''}" style="background:${bg};border-color:${border}">
-        <div class="tile-num">${tile.pos}</div>
-        <div class="tile-tokens">${tokens}</div>
-      </div>`;
-    }).join('')}</div>`
-  ).join('');
+  function renderTile(tile) {
+    const teamsHere = teams.map((t, i) => ({ ...t, i })).filter(t => t.pos === tile.pos);
+    const col = tile.cat ? CAT_COL[tile.cat] : null;
+    const isActive = teamsHere.some(t => t.i === gs.turn);
+    const isWin = tile.pos === spaces;
+    const isEffect = effectInterval > 0 && tile.pos % effectInterval === 0 && !isWin;
+    const isEventRaw = eventTiles.includes(tile.pos) && !usedEventTiles.includes(tile.pos);
+    const showEvents = !s.settings.eventHidden;
+    const isEvent = isEventRaw && showEvents;
+    const bg = col ? `${col}BF` : 'var(--surf2)';
+    const border = isWin ? '#f5a623' : isEvent ? '#e85d5d' : 'var(--bdr)';
+    const draggable = state && state.phase === 'active';
+    const tokens = teamsHere.map(t =>
+      `<div class="token${t.i === gs.turn ? ' token-active' : ''}" style="background:${TCOLORS[t.i % 6]}" title="${t.name}" ${draggable ? `draggable="true" data-team-idx="${t.i}"` : ''}>${t.name[0].toUpperCase()}</div>`
+    ).join('');
+    return `<div class="tile${isWin ? ' tile-win' : ''}${isActive ? ' tile-active' : ''}" style="background:${bg};border-color:${border}" data-pos="${tile.pos}">
+      <div class="tile-num">${tile.pos}</div>
+      <div class="tile-tokens">${tokens}</div>
+      ${isEffect ? '<div class="tile-effect-icon">🎲</div>' : ''}
+      ${isEvent ? '<div class="tile-effect-icon" style="color:#e85d5d">⚡</div>' : ''}
+    </div>`;
+  }
+
+  document.getElementById('board').innerHTML = segments.map(seg => {
+    if (seg.type === 'straight') {
+      const justify = seg.goRight ? 'flex-start' : 'flex-end';
+      return `<div class="board-row" style="justify-content:${justify}">${seg.tiles.map(t => renderTile(t)).join('')}</div>`;
+    } else {
+      return `<div class="board-row" style="justify-content:${seg.align}">${renderTile(seg.tile)}</div>`;
+    }
+  }).join('');
 }
 
 function startTimer() {
@@ -450,6 +591,7 @@ function copyCode() {
 }
 
 async function startGame() {
+  if (!localCards.length) { toast('No cards uploaded — add cards first!'); return; }
   const r = await api('start-game');
   if (r && r.ok) toast('Game started!');
   else if (r && r.error) toast(r.error);
@@ -463,8 +605,12 @@ async function undoTurn() {
 
 async function saveSettings() {
   const timer = parseInt(document.getElementById('s-timer').value) || 60;
-  const spaces = parseInt(document.getElementById('s-spaces').value) || 30;
-  await api('settings', { timer, spaces });
+  const spaces = parseInt(document.getElementById('s-spaces').value) || 49;
+  const skips = parseInt(document.getElementById('s-skips').value) ?? 1;
+  const effectInterval = parseInt(document.getElementById('s-eff').value) || 0;
+  const eventFrequency = parseInt(document.getElementById('s-event').value) || 0;
+  const eventHidden = document.getElementById('s-event-hidden').checked;
+  await api('settings', { timer, spaces, skips, effectInterval, eventFrequency, eventHidden });
   toast('Settings saved');
 }
 
@@ -472,7 +618,7 @@ async function saveSettings() {
 async function addCard() {
   const w = document.getElementById('cw').value.trim();
   if (!w) { toast('Enter a word!'); return; }
-  const card = { word: w, cat: document.getElementById('cc').value, hint: document.getElementById('ch').value.trim() };
+  const card = { word: w, cat: document.getElementById('cc').value };
   await fetch('/api/cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(card) });
   document.getElementById('cw').value = '';
   document.getElementById('ch').value = '';
@@ -485,7 +631,7 @@ async function bulkImport() {
   const newCards = [];
   lines.forEach(l => {
     const p = l.split(',');
-    if (p[0]) newCards.push({ word: p[0].trim(), cat: p[1] ? p[1].trim() : 'Object', hint: p[2] ? p[2].trim() : '' });
+    if (p[0]) newCards.push({ word: p[0].trim(), cat: p[1] ? p[1].trim() : 'Object' });
   });
   if (!newCards.length) { toast('Nothing to import'); return; }
   await fetch('/api/cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify([...localCards, ...newCards]) });
@@ -531,6 +677,11 @@ async function importCards(e) {
 async function loadCards() {
   const r = await fetch('/api/cards');
   localCards = await r.json();
+  const cats = await (await fetch('/api/categories')).json();
+  CATS = cats.map(c => c.name);
+  CAT_COL = Object.fromEntries(cats.map(c => [c.name, c.color]));
+  document.getElementById('cc-list').innerHTML = CATS.map(n => `<option value="${n}">`).join('');
+  if (state) renderBoard(state);
   renderCards();
 }
 
@@ -540,10 +691,175 @@ function renderCards() {
   if (!localCards.length) { el.innerHTML = '<div class="empty">No cards yet</div>'; return; }
   el.innerHTML = localCards.map((c, i) => `
     <div class="ci">
-      <div><div class="ci-w">${c.word}</div><div class="ci-c" style="color:${CAT_COL[c.cat] || '#999'}">${c.cat}${c.hint ? ' · ' + c.hint : ''}</div></div>
+      <div><div class="ci-w">${c.word}</div><div class="ci-c" style="color:${CAT_COL[c.cat] || '#999'}">${c.cat}</div></div>
       <button class="ci-del" onclick="deleteCard(${i})">✕</button>
     </div>
   `).join('');
+}
+
+// Event cards
+let localEventCards = [];
+
+async function loadEventCards() {
+  const r = await fetch('/api/event-cards');
+  localEventCards = await r.json();
+  renderEventCards();
+}
+
+function renderEventCards() {
+  document.getElementById('event-ct-title').textContent = `Event cards (${localEventCards.length})`;
+  const el = document.getElementById('event-list');
+  if (!localEventCards.length) { el.innerHTML = '<div class="empty">No event cards yet</div>'; return; }
+  el.innerHTML = localEventCards.map((c, i) => `
+    <div class="ci">
+      <div class="ci-w">${c.text}</div>
+      <button class="ci-del" onclick="deleteEventCard(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+async function addEvent() {
+  const text = document.getElementById('ew').value.trim();
+  if (!text) { toast('Enter event text!'); return; }
+  await fetch('/api/event-cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+  document.getElementById('ew').value = '';
+  await loadEventCards();
+  toast('Event card added!');
+}
+
+async function bulkImportEvent() {
+  const lines = document.getElementById('bulk-event').value.trim().split('\n');
+  const newEvents = lines.map(l => l.trim()).filter(Boolean).map(text => ({ text }));
+  if (!newEvents.length) { toast('Nothing to import'); return; }
+  await fetch('/api/event-cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify([...localEventCards, ...newEvents]) });
+  document.getElementById('bulk-event').value = '';
+  await loadEventCards();
+  toast(`Imported ${newEvents.length} event cards!`);
+}
+
+async function deleteEventCard(i) {
+  localEventCards.splice(i, 1);
+  await fetch('/api/event-cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(localEventCards) });
+  renderEventCards();
+}
+
+async function clearEventCards() {
+  if (!confirm('Clear all event cards?')) return;
+  await fetch('/api/event-cards/clear', { method: 'POST' });
+  await loadEventCards();
+  toast('Event cards cleared!');
+}
+
+function exportEventCards() {
+  const b = new Blob([JSON.stringify(localEventCards, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'articulate-event-cards.json'; a.click();
+}
+
+async function importEventCards(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = async ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (Array.isArray(d)) {
+        const normalized = d.map(item => typeof item === 'string' ? { text: item } : item).filter(item => item.text);
+        await fetch('/api/event-cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify([...localEventCards, ...normalized]) });
+        await loadEventCards();
+        toast(`Imported ${normalized.length} event cards!`);
+      }
+    } catch { toast('Invalid file'); }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+}
+
+// Effect cards
+let localEffectCards = [];
+
+async function loadEffectCards() {
+  const r = await fetch('/api/effect-cards');
+  localEffectCards = await r.json();
+  renderEffectCards();
+}
+
+function renderEffectCards() {
+  document.getElementById('effect-ct-title').textContent = `Effect cards (${localEffectCards.length})`;
+  const el = document.getElementById('effect-list');
+  if (!localEffectCards.length) { el.innerHTML = '<div class="empty">No effect cards yet</div>'; return; }
+  el.innerHTML = localEffectCards.map((c, i) => `
+    <div class="ci">
+      <div class="ci-w">${c.text}</div>
+      <button class="ci-del" onclick="deleteEffectCard(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+async function addEffect() {
+  const text = document.getElementById('ef').value.trim();
+  if (!text) { toast('Enter effect text!'); return; }
+  await fetch('/api/effect-cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+  document.getElementById('ef').value = '';
+  await loadEffectCards();
+  toast('Effect card added!');
+}
+
+async function bulkImportEffect() {
+  const lines = document.getElementById('bulk-ef').value.trim().split('\n');
+  const newEffects = lines.map(l => l.trim()).filter(Boolean).map(text => ({ text }));
+  if (!newEffects.length) { toast('Nothing to import'); return; }
+  await fetch('/api/effect-cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify([...localEffectCards, ...newEffects]) });
+  document.getElementById('bulk-ef').value = '';
+  await loadEffectCards();
+  toast(`Imported ${newEffects.length} effect cards!`);
+}
+
+async function deleteEffectCard(i) {
+  localEffectCards.splice(i, 1);
+  await fetch('/api/effect-cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(localEffectCards) });
+  renderEffectCards();
+}
+
+async function clearEffectCards() {
+  if (!confirm('Clear all effect cards?')) return;
+  await fetch('/api/effect-cards/clear', { method: 'POST' });
+  await loadEffectCards();
+  toast('Effect cards cleared!');
+}
+
+function exportEffectCards() {
+  const b = new Blob([JSON.stringify(localEffectCards, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'articulate-effect-cards.json'; a.click();
+}
+
+async function importEffectCards(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = async ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (Array.isArray(d)) {
+        // Accept either [{text}] or plain strings
+        const normalized = d.map(item => typeof item === 'string' ? { text: item } : item).filter(item => item.text);
+        await fetch('/api/effect-cards', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify([...localEffectCards, ...normalized]) });
+        await loadEffectCards();
+        toast(`Imported ${normalized.length} effect cards!`);
+      }
+    } catch { toast('Invalid file'); }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+}
+
+function showModal(eyebrow, title, body, actionsHTML) {
+  document.getElementById('modal-eyebrow').textContent = eyebrow;
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  document.getElementById('modal-actions').innerHTML = actionsHTML || '';
+  document.getElementById('modal-backdrop').classList.add('show');
+}
+
+function dismissModal() {
+  document.getElementById('modal-backdrop').classList.remove('show');
 }
 
 function toast(msg) {
@@ -565,6 +881,11 @@ function syncSettingsInputs(s) {
   if (s && s.settings) {
     document.getElementById('s-timer').value = s.settings.timer;
     document.getElementById('s-spaces').value = s.settings.spaces;
+    document.getElementById('s-skips').value = s.settings.skips ?? 1;
+    document.getElementById('s-eff').value = s.settings.effectInterval ?? 0;
+    document.getElementById('s-event').value = s.settings.eventFrequency ?? 0;
+    document.getElementById('s-event-val').textContent = s.settings.eventFrequency ?? 0;
+    document.getElementById('s-event-hidden').checked = s.settings.eventHidden !== false;
   }
 }
 
@@ -572,10 +893,49 @@ const origApply = applyState;
 window.applyState = function(s) { origApply(s); syncSettingsInputs(s); };
 
 connectSSE();
-loadCards();
-fetch('/api/state').then(r => r.json()).then(applyState);
+loadCards().then(() => fetch('/api/state').then(r => r.json()).then(applyState));
+loadEffectCards();
+loadEventCards();
 
 new ResizeObserver(() => { if (state) renderBoard(state); }).observe(document.getElementById('board-card'));
+
+// Drag-and-drop token repositioning
+let dragTeamIdx = null;
+const boardEl = document.getElementById('board');
+
+boardEl.addEventListener('dragstart', e => {
+  const token = e.target.closest('[data-team-idx]');
+  if (!token) return;
+  dragTeamIdx = parseInt(token.dataset.teamIdx);
+  e.dataTransfer.effectAllowed = 'move';
+});
+
+boardEl.addEventListener('dragover', e => {
+  if (dragTeamIdx === null) return;
+  const tile = e.target.closest('[data-pos]');
+  if (tile) e.preventDefault();
+});
+
+boardEl.addEventListener('dragenter', e => {
+  const tile = e.target.closest('[data-pos]');
+  if (tile && dragTeamIdx !== null) tile.classList.add('tile-drag-over');
+});
+
+boardEl.addEventListener('dragleave', e => {
+  const tile = e.target.closest('[data-pos]');
+  if (tile) tile.classList.remove('tile-drag-over');
+});
+
+boardEl.addEventListener('drop', e => {
+  const tile = e.target.closest('[data-pos]');
+  if (!tile || dragTeamIdx === null) return;
+  tile.classList.remove('tile-drag-over');
+  const pos = parseInt(tile.dataset.pos);
+  api('set-position', { teamIdx: dragTeamIdx, pos });
+  dragTeamIdx = null;
+});
+
+boardEl.addEventListener('dragend', () => { dragTeamIdx = null; });
 </script>
 </body>
 </html>

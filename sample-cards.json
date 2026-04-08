@@ -1,67 +1,242 @@
 [
-  { "word": "Umbrella", "cat": "Object", "hint": "Used in rain" },
-  { "word": "Backpack", "cat": "Object", "hint": "Worn on your back" },
-  { "word": "Telescope", "cat": "Object", "hint": "Used to see far away" },
-  { "word": "Stapler", "cat": "Object", "hint": "Joins paper together" },
-  { "word": "Hammock", "cat": "Object", "hint": "Hung between two trees" },
-  { "word": "Blender", "cat": "Object", "hint": "Makes smoothies" },
-  { "word": "Compass", "cat": "Object", "hint": "Shows which way is north" },
-  { "word": "Ladder", "cat": "Object", "hint": "Used to climb up" },
-  { "word": "Magnifying glass", "cat": "Object", "hint": "Makes things look bigger" },
-  { "word": "Wheelbarrow", "cat": "Object", "hint": "One-wheeled garden cart" },
-
-  { "word": "Juggling", "cat": "Action", "hint": "Throwing and catching multiple things" },
-  { "word": "Sneezing", "cat": "Action", "hint": "Achoo!" },
-  { "word": "Tiptoeing", "cat": "Action", "hint": "Walking quietly on your toes" },
-  { "word": "Whistling", "cat": "Action", "hint": "Making music with your lips" },
-  { "word": "Shrugging", "cat": "Action", "hint": "Raising shoulders to say 'I don't know'" },
-  { "word": "Skipping", "cat": "Action", "hint": "A hop-step movement" },
-  { "word": "Yawning", "cat": "Action", "hint": "Opening mouth wide when tired" },
-  { "word": "Winking", "cat": "Action", "hint": "Closing one eye" },
-  { "word": "Crouching", "cat": "Action", "hint": "Bending down low" },
-  { "word": "Applauding", "cat": "Action", "hint": "Clapping your hands" },
-
-  { "word": "Amazon River", "cat": "World", "hint": "Largest river by water volume" },
-  { "word": "Sahara Desert", "cat": "World", "hint": "Largest hot desert" },
-  { "word": "Mount Everest", "cat": "World", "hint": "Highest mountain on Earth" },
-  { "word": "Great Barrier Reef", "cat": "World", "hint": "Huge coral reef off Australia" },
-  { "word": "Antarctica", "cat": "World", "hint": "Coldest continent" },
-  { "word": "Iceland", "cat": "World", "hint": "Island country near the Arctic Circle" },
-  { "word": "Niagara Falls", "cat": "World", "hint": "Famous waterfall on USA/Canada border" },
-  { "word": "Dead Sea", "cat": "World", "hint": "Saltiest lake — you float easily" },
-  { "word": "Grand Canyon", "cat": "World", "hint": "Massive gorge in Arizona" },
-  { "word": "Taj Mahal", "cat": "World", "hint": "Famous white mausoleum in India" },
-
-  { "word": "Albert Einstein", "cat": "Person", "hint": "Famous physicist, E=mc²" },
-  { "word": "Cleopatra", "cat": "Person", "hint": "Last pharaoh of ancient Egypt" },
-  { "word": "Neil Armstrong", "cat": "Person", "hint": "First person on the moon" },
-  { "word": "Shakespeare", "cat": "Person", "hint": "Wrote Romeo and Juliet" },
-  { "word": "Marie Curie", "cat": "Person", "hint": "First woman to win a Nobel Prize" },
-  { "word": "Leonardo da Vinci", "cat": "Person", "hint": "Painted the Mona Lisa" },
-  { "word": "Genghis Khan", "cat": "Person", "hint": "Founded the Mongol Empire" },
-  { "word": "Abraham Lincoln", "cat": "Person", "hint": "16th US president" },
-  { "word": "Frida Kahlo", "cat": "Person", "hint": "Mexican painter known for self-portraits" },
-  { "word": "Charles Darwin", "cat": "Person", "hint": "Theory of evolution" },
-
-  { "word": "Avalanche", "cat": "Nature", "hint": "Snow sliding down a mountain" },
-  { "word": "Coral reef", "cat": "Nature", "hint": "Underwater ecosystem built by tiny animals" },
-  { "word": "Glacier", "cat": "Nature", "hint": "Slow-moving river of ice" },
-  { "word": "Tornado", "cat": "Nature", "hint": "Spinning column of air" },
-  { "word": "Mangrove", "cat": "Nature", "hint": "Trees with roots in saltwater" },
-  { "word": "Aurora borealis", "cat": "Nature", "hint": "Colourful lights in the northern sky" },
-  { "word": "Tidal wave", "cat": "Nature", "hint": "Giant wave caused by an earthquake" },
-  { "word": "Stalactite", "cat": "Nature", "hint": "Rock formation hanging from a cave ceiling" },
-  { "word": "Monsoon", "cat": "Nature", "hint": "Seasonal heavy rainfall" },
-  { "word": "Sinkhole", "cat": "Nature", "hint": "Ground suddenly collapses" },
-
-  { "word": "Déjà vu", "cat": "Random", "hint": "Feeling you've experienced something before" },
-  { "word": "Buffet", "cat": "Random", "hint": "All-you-can-eat style meal" },
-  { "word": "Autopilot", "cat": "Random", "hint": "Doing something without thinking" },
-  { "word": "Speed bump", "cat": "Random", "hint": "Raised road surface to slow cars" },
-  { "word": "Brain freeze", "cat": "Random", "hint": "Headache from eating ice cream too fast" },
-  { "word": "Encore", "cat": "Random", "hint": "When the crowd wants one more song" },
-  { "word": "Goosebumps", "cat": "Random", "hint": "Skin reaction to cold or fear" },
-  { "word": "Shortcut", "cat": "Random", "hint": "Quicker route to get somewhere" },
-  { "word": "Plot twist", "cat": "Random", "hint": "Unexpected turn in a story" },
-  { "word": "Comfort zone", "cat": "Random", "hint": "Where you feel safe and relaxed" }
+  {
+    "word": "Umbrella",
+    "cat": "Object"
+  },
+  {
+    "word": "Backpack",
+    "cat": "Object"
+  },
+  {
+    "word": "Telescope",
+    "cat": "Object"
+  },
+  {
+    "word": "Stapler",
+    "cat": "Object"
+  },
+  {
+    "word": "Hammock",
+    "cat": "Object"
+  },
+  {
+    "word": "Blender",
+    "cat": "Object"
+  },
+  {
+    "word": "Compass",
+    "cat": "Object"
+  },
+  {
+    "word": "Ladder",
+    "cat": "Object"
+  },
+  {
+    "word": "Magnifying glass",
+    "cat": "Object"
+  },
+  {
+    "word": "Wheelbarrow",
+    "cat": "Object"
+  },
+  {
+    "word": "Juggling",
+    "cat": "Action"
+  },
+  {
+    "word": "Sneezing",
+    "cat": "Action"
+  },
+  {
+    "word": "Tiptoeing",
+    "cat": "Action"
+  },
+  {
+    "word": "Whistling",
+    "cat": "Action"
+  },
+  {
+    "word": "Shrugging",
+    "cat": "Action"
+  },
+  {
+    "word": "Skipping",
+    "cat": "Action"
+  },
+  {
+    "word": "Yawning",
+    "cat": "Action"
+  },
+  {
+    "word": "Winking",
+    "cat": "Action"
+  },
+  {
+    "word": "Crouching",
+    "cat": "Action"
+  },
+  {
+    "word": "Applauding",
+    "cat": "Action"
+  },
+  {
+    "word": "Amazon River",
+    "cat": "World"
+  },
+  {
+    "word": "Sahara Desert",
+    "cat": "World"
+  },
+  {
+    "word": "Mount Everest",
+    "cat": "World"
+  },
+  {
+    "word": "Great Barrier Reef",
+    "cat": "World"
+  },
+  {
+    "word": "Antarctica",
+    "cat": "World"
+  },
+  {
+    "word": "Iceland",
+    "cat": "World"
+  },
+  {
+    "word": "Niagara Falls",
+    "cat": "World"
+  },
+  {
+    "word": "Dead Sea",
+    "cat": "World"
+  },
+  {
+    "word": "Grand Canyon",
+    "cat": "World"
+  },
+  {
+    "word": "Taj Mahal",
+    "cat": "World"
+  },
+  {
+    "word": "Albert Einstein",
+    "cat": "Person"
+  },
+  {
+    "word": "Cleopatra",
+    "cat": "Person"
+  },
+  {
+    "word": "Neil Armstrong",
+    "cat": "Person"
+  },
+  {
+    "word": "Shakespeare",
+    "cat": "Person"
+  },
+  {
+    "word": "Marie Curie",
+    "cat": "Person"
+  },
+  {
+    "word": "Leonardo da Vinci",
+    "cat": "Person"
+  },
+  {
+    "word": "Genghis Khan",
+    "cat": "Person"
+  },
+  {
+    "word": "Abraham Lincoln",
+    "cat": "Person"
+  },
+  {
+    "word": "Frida Kahlo",
+    "cat": "Person"
+  },
+  {
+    "word": "Charles Darwin",
+    "cat": "Person"
+  },
+  {
+    "word": "Avalanche",
+    "cat": "Nature"
+  },
+  {
+    "word": "Coral reef",
+    "cat": "Nature"
+  },
+  {
+    "word": "Glacier",
+    "cat": "Nature"
+  },
+  {
+    "word": "Tornado",
+    "cat": "Nature"
+  },
+  {
+    "word": "Mangrove",
+    "cat": "Nature"
+  },
+  {
+    "word": "Aurora borealis",
+    "cat": "Nature"
+  },
+  {
+    "word": "Tidal wave",
+    "cat": "Nature"
+  },
+  {
+    "word": "Stalactite",
+    "cat": "Nature"
+  },
+  {
+    "word": "Monsoon",
+    "cat": "Nature"
+  },
+  {
+    "word": "Sinkhole",
+    "cat": "Nature"
+  },
+  {
+    "word": "Déjà vu",
+    "cat": "Random"
+  },
+  {
+    "word": "Buffet",
+    "cat": "Random"
+  },
+  {
+    "word": "Autopilot",
+    "cat": "Random"
+  },
+  {
+    "word": "Speed bump",
+    "cat": "Random"
+  },
+  {
+    "word": "Brain freeze",
+    "cat": "Random"
+  },
+  {
+    "word": "Encore",
+    "cat": "Random"
+  },
+  {
+    "word": "Goosebumps",
+    "cat": "Random"
+  },
+  {
+    "word": "Shortcut",
+    "cat": "Random"
+  },
+  {
+    "word": "Plot twist",
+    "cat": "Random"
+  },
+  {
+    "word": "Comfort zone",
+    "cat": "Random"
+  }
 ]

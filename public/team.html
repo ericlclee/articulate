@@ -18,14 +18,17 @@ label{font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.4px;disp
 input,select{width:100%;background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;color:var(--txt);padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:16px;outline:none;margin-bottom:14px}
 input:focus,select:focus{border-color:var(--acc)}
 select option{background:var(--surf)}
-.btn{width:100%;padding:13px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:none;color:var(--txt);transition:all .12s;margin-bottom:8px}
-.btn:hover{background:var(--surf2)}
-.btn-acc{background:var(--acc);color:#000;border-color:var(--acc)}
+.btn{width:100%;padding:13px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;border:none;background:var(--surf2);color:var(--txt);transition:all .12s;margin-bottom:8px}
+.btn:hover{background:#302c28}
+.btn-acc{background:var(--acc);color:#000}
+.btn-purple{background:#c57aff;color:#000}
 .btn-acc:hover{background:#f0b040}
-.btn-ok{background:#1a3d2a;color:#52c97a;border-color:#2a5a3a;font-size:18px;padding:16px}
-.btn-ok:hover{background:#1f4a30}
-.btn-end{background:#252220;color:var(--muted);border-color:var(--bdr)}
-.btn-end:hover{background:#2e2b27}
+.btn-ok{background:#1db954;color:#000;font-size:18px;padding:16px}
+.btn-ok:hover{background:#22cc5c}
+.btn-end{background:#e02020;color:#000}
+.btn-end:hover{background:#f02525}
+.btn-skip{background:#c8c0b4;color:#000}
+.btn-skip:hover{background:#d4ccbf}
 .btn:disabled{opacity:.35;cursor:not-allowed}
 .code-big{font-size:32px;font-family:'Fraunces',serif;font-weight:700;letter-spacing:8px;text-align:center;text-transform:uppercase}
 .spin-wrap{text-align:center;padding:28px 0}
@@ -40,8 +43,9 @@ select option{background:var(--surf)}
 .me-badge{font-size:11px;background:var(--acc);color:#000;padding:1px 7px;border-radius:20px;font-weight:500}
 
 /* Game */
-.turn-banner{border-radius:10px;padding:13px 15px;text-align:center;font-size:15px;font-weight:600;margin-bottom:12px}
+.turn-banner{border-radius:10px;padding:13px 15px;text-align:center;font-size:15px;font-weight:400;margin-bottom:12px}
 .your-turn{background:#1a3d2a;color:#52c97a}
+.your-turn-effect{background:#2a1a3d;color:#c57aff}
 .their-turn{background:var(--surf2);color:var(--muted)}
 .timer-ring{position:relative;width:120px;height:120px;margin:0 auto 6px}
 .timer-ring svg{transform:rotate(-90deg)}
@@ -51,8 +55,9 @@ circle{fill:none;stroke-width:7}
 .tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:36px;font-weight:700}
 .tlbl{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px}
 
-.card-reveal{border:1px solid var(--bdr);border-radius:12px;padding:26px;text-align:center;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:10px 0}
-.big-word{font-family:'Fraunces',serif;font-size:48px;font-weight:900;line-height:1.1}
+.card-reveal{background:transparent;border:1px solid var(--bdr);border-radius:12px;padding:20px 26px;text-align:center;height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:10px 0;overflow:hidden}
+.card-reveal.active{background:#ece4d4;border-color:#c9b896;color:#1a1510}
+.big-word{font-family:'Fraunces',serif;font-size:48px;font-weight:900;line-height:1.1;word-break:break-word}
 .cat-chip{font-size:12px;padding:3px 11px;border-radius:20px;font-weight:600;margin-bottom:10px;display:inline-block}
 .hint-txt{font-size:13px;color:var(--muted);margin-top:8px}
 .hidden-card{color:var(--muted);font-size:14px}
@@ -66,10 +71,21 @@ circle{fill:none;stroke-width:7}
 .prog{height:4px;background:var(--bdr);border-radius:2px;margin-top:6px;overflow:hidden}
 .prog-f{height:100%;background:var(--acc);border-radius:2px;transition:width .4s}
 .playing-dot{width:7px;height:7px;border-radius:50%;background:#52c97a;display:inline-block;margin-right:5px;vertical-align:middle}
-.winner-box{background:#2a1f00;border:1px solid #6a4f00;border-radius:12px;padding:18px;text-align:center;margin-bottom:12px}
-.winner-box h2{font-family:'Fraunces',serif;font-size:26px;color:var(--acc)}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surf2);border:1px solid var(--bdr);border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
+
+/* Announcement modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-backdrop.show{opacity:1;pointer-events:all}
+.modal{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:32px 28px;max-width:380px;width:90%;text-align:center;transform:scale(.95);transition:transform .2s;position:relative}
+.modal-close{position:absolute;top:12px;right:16px;font-size:20px;color:var(--muted);cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--txt)}
+.modal-backdrop.show .modal{transform:scale(1)}
+.modal-eyebrow{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.modal-title{font-family:'Fraunces',serif;font-size:26px;font-weight:900;color:var(--acc);margin-bottom:10px}
+.modal-body{font-size:16px;font-weight:500;color:var(--txt);line-height:1.5;margin-bottom:24px}
+.modal-dismiss{font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.modal-dismiss:hover{color:var(--txt)}
 .conn-dot{width:8px;height:8px;border-radius:50%;background:#888;display:inline-block;margin-right:5px;vertical-align:middle;transition:background .3s}
 .conn-dot.ok{background:#52c97a}
 .error-msg{color:#e85d5d;font-size:13px;text-align:center;margin-top:-4px;margin-bottom:8px;min-height:18px}
@@ -109,7 +125,6 @@ circle{fill:none;stroke-width:7}
 
 <!-- GAME SCREEN -->
 <div class="screen" id="s-game">
-  <div id="winner-area"></div>
   <div id="turn-banner" class="turn-banner their-turn">Waiting...</div>
 
   <div class="card">
@@ -123,6 +138,9 @@ circle{fill:none;stroke-width:7}
       <button class="btn" style="width:auto;padding:6px 12px;font-size:12px;margin:0" onclick="leaveGame()">Leave</button>
     </div>
 
+    <div id="turn-score-display" style="text-align:center;margin-bottom:8px;visibility:hidden">
+      <div style="font-size:13px;color:var(--muted)">This turn: <strong id="turn-score-val" style="color:var(--acc);font-family:'Fraunces',serif;font-size:18px">0</strong></div>
+    </div>
     <div class="timer-ring">
       <svg width="120" height="120" viewBox="0 0 120 120">
         <circle class="tr" cx="60" cy="60" r="52"/>
@@ -142,10 +160,16 @@ circle{fill:none;stroke-width:7}
         Get card
       </button>
       <div id="answer-controls" style="display:none">
-        <div id="turn-score-display" style="text-align:center;margin-bottom:10px;font-size:13px;color:var(--muted)">This turn: <strong id="turn-score-val" style="color:var(--acc);font-family:'Fraunces',serif;font-size:18px">0</strong></div>
         <button class="btn btn-ok" onclick="markCorrect()">Correct</button>
+        <button class="btn btn-skip" id="btn-skip" onclick="skipCard()">Skip (<span id="skips-left">0</span> left)</button>
         <button class="btn btn-end" onclick="endTurn()">End turn</button>
       </div>
+    </div>
+    <!-- Effect card controls (post-turn on effect tile) -->
+    <div id="effect-controls" style="margin-top:10px;display:none">
+      <button class="btn btn-purple" id="btn-draw-effect" onclick="drawEffect()" style="font-size:17px;padding:15px">
+        🎲 Draw effect card
+      </button>
     </div>
   </div>
 
@@ -155,12 +179,22 @@ circle{fill:none;stroke-width:7}
   </div>
 </div>
 
+<div class="modal-backdrop" id="modal-backdrop" onclick="dismissModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-close" onclick="dismissModal()">&times;</div>
+    <div class="modal-eyebrow" id="modal-eyebrow"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div id="modal-actions"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 const CIRC = 326.7;
 const TCOLORS = ['#4a9eff','#e85d8a','#52c97a','#f5a623','#ff7f50','#b39ddb'];
-const CATCOL = {Object:'#4a9eff',Action:'#ff6b6b',World:'#52c97a',Person:'#f5a623',Nature:'#26c6da',Random:'#c57aff'};
+let CATCOL = {};
 
 let myTeamIdx = -1;
 let myRoom = '';
@@ -309,82 +343,170 @@ function renderLobby(s) {
 function renderGame(s) {
   if (!s) return;
   const { teams, settings, gs, currentCard, phase } = s;
-  const isMyTurn = gs.turn === myTeamIdx;
+  const myTeam = teams[myTeamIdx];
+  const status = myTeam ? myTeam.status : 'idle';
   timerMax = parseInt(settings.timer);
 
-  // Winner
-  document.getElementById('winner-area').innerHTML = phase === 'done'
-    ? `<div class="winner-box"><h2>${teams.find(t => t.pos >= parseInt(settings.spaces))?.name || '?'} wins!</h2></div>`
-    : '';
+  renderWinner(teams, settings, phase);
+  renderBanner(teams, gs, status, myTeam);
+  renderControls(status, phase, currentCard, gs, s.deckSize);
+  renderCard(status, currentCard, gs, s.deckSize);
+  renderTimer(gs, s.timestamp, status);
+  renderScores(teams, settings, gs);
+  renderEvent(s);
+}
 
-  // Turn banner
+let prevPhase = null;
+function renderWinner(teams, settings, phase) {
+  if (phase === 'done' && prevPhase !== 'done') {
+    const winner = teams.find(t => t.pos >= parseInt(settings.spaces));
+    showModal('Game over', `${winner ? winner.name : 'A team'} wins!`, `First to reach ${settings.spaces} spaces!`);
+  }
+  if (phase !== 'done' && prevPhase === 'done') dismissModal();
+  prevPhase = phase;
+}
+
+function renderBanner(teams, gs, status, myTeam) {
   const banner = document.getElementById('turn-banner');
-  if (isMyTurn) {
-    banner.className = 'turn-banner your-turn';
-    banner.textContent = gs.phase === 'playing' ? 'Your turn — describe it!' : 'Your turn!';
+  const effect = myTeam && myTeam.activeEffect ? myTeam.activeEffect.text : null;
+  if (status === 'pre-turn') {
+    banner.className = effect ? 'turn-banner your-turn-effect' : 'turn-banner your-turn';
+    banner.textContent = effect ? `🎲 Effect: ${effect}` : 'Your turn!';
+  } else if (status === 'guessing') {
+    banner.className = effect ? 'turn-banner your-turn-effect' : 'turn-banner your-turn';
+    banner.textContent = effect ? `🎲 Effect: ${effect}` : 'Your turn — describe it!';
+  } else if (status === 'post-turn') {
+    banner.className = 'turn-banner your-turn-effect';
+    banner.textContent = '🎲 You landed on an effect tile!';
   } else {
     const active = teams[gs.turn];
     banner.className = 'turn-banner their-turn';
-    banner.innerHTML = `<span class="playing-dot"></span>${active ? active.name : '?'} is describing...`;
+    const waitText = active ? `${active.name} is describing...` : 'Waiting...';
+    banner.innerHTML = effect
+      ? `🎲 Active Effect: ${effect}`
+      : `<span class="playing-dot"></span>${waitText}`;
   }
+}
 
-  // Turn controls
+function renderControls(status, phase, currentCard, gs, deckSize) {
   const controls = document.getElementById('turn-controls');
   const btnGet = document.getElementById('btn-get-card');
   const answerControls = document.getElementById('answer-controls');
+  const scoreDisplay = document.getElementById('turn-score-display');
 
-  if (isMyTurn && phase === 'active') {
-    controls.style.display = '';
-    if (gs.phase === 'waiting') {
-      btnGet.style.display = '';
-      answerControls.style.display = 'none';
-    } else {
-      btnGet.style.display = 'none';
-      answerControls.style.display = '';
-      document.getElementById('turn-score-val').textContent = gs.turnScore || 0;
-    }
-  } else {
+  const effectControls = document.getElementById('effect-controls');
+
+  if (status === 'post-turn') {
     controls.style.display = 'none';
+    effectControls.style.display = '';
+    document.getElementById('btn-draw-effect').disabled = false;
+    scoreDisplay.style.visibility = 'hidden';
+    return;
   }
 
-  // Card display
+  effectControls.style.display = 'none';
+
+  if (status === 'idle' || phase !== 'active') {
+    controls.style.display = 'none';
+    scoreDisplay.style.visibility = 'hidden';
+    return;
+  }
+
+  controls.style.display = '';
+
+  if (status === 'pre-turn') {
+    btnGet.style.display = '';
+    answerControls.style.display = 'none';
+    scoreDisplay.style.visibility = 'visible';
+    document.getElementById('turn-score-val').textContent = gs.turnScore || 0;
+  } else if (status === 'guessing') {
+    const cardsExhausted = !currentCard;
+    btnGet.style.display = 'none';
+    answerControls.style.display = '';
+    scoreDisplay.style.visibility = 'visible';
+    document.getElementById('turn-score-val').textContent = gs.turnScore || 0;
+    const skipsLeft = gs.skipsLeft ?? 0;
+    document.getElementById('skips-left').textContent = skipsLeft;
+    document.getElementById('btn-skip').disabled = skipsLeft <= 0 || cardsExhausted;
+    document.querySelector('.btn-ok').style.display = cardsExhausted ? 'none' : '';
+  }
+}
+
+function renderCard(status, currentCard, gs, deckSize) {
   const cr = document.getElementById('card-reveal');
-  if (isMyTurn && currentCard) {
+  if (status === 'guessing' && currentCard) {
+    cr.classList.add('active');
     const col = CATCOL[currentCard.cat] || '#999';
     cr.innerHTML = `
       <div class="cat-chip" style="background:${col}22;color:${col}">${currentCard.cat}</div>
       <div class="big-word">${currentCard.word}</div>
-      ${currentCard.hint ? `<div class="hint-txt">${currentCard.hint}</div>` : ''}
     `;
-  } else if (isMyTurn && gs.phase === 'waiting') {
-    cr.innerHTML = '<div class="hidden-card">Press "Get card" to start your turn</div>';
+    requestAnimationFrame(fitCardText);
   } else {
-    cr.innerHTML = '<div class="hidden-card">Card hidden — only the describer sees it</div>';
+    cr.classList.remove('active');
+    if (status === 'guessing' && !currentCard) {
+      cr.innerHTML = '<div class="hidden-card" style="color:var(--acc)">All cards in this category have been seen — end your turn!</div>';
+    } else if (status === 'pre-turn') {
+      cr.innerHTML = deckSize === 0
+        ? '<div class="hidden-card" style="color:#e85d5d">No cards uploaded — ask the host to add cards</div>'
+        : '<div class="hidden-card">Press "Get card" to start your turn</div>';
+    } else if (status === 'post-turn') {
+      cr.innerHTML = '<div class="hidden-card">Press "Draw effect card" to reveal your effect</div>';
+    } else {
+      cr.innerHTML = '<div class="hidden-card">Card hidden — only the describer sees it</div>';
+    }
   }
+}
 
-  // Timer
-  if (gs.phase === 'playing' && s.timestamp) {
-    const elapsed = Math.floor((Date.now() - s.timestamp) / 1000);
+function renderTimer(gs, timestamp, status) {
+  if (status === 'guessing' && timestamp) {
+    const elapsed = Math.floor((Date.now() - timestamp) / 1000);
     timerLeft = Math.max(0, timerMax - elapsed);
     startTimer();
   } else {
     stopTimer();
     document.getElementById('tnum').textContent = timerMax;
     setTP(1);
-    document.getElementById('tlbl').textContent = isMyTurn && gs.phase === 'waiting' ? 'Ready' : 'Waiting';
+    document.getElementById('tlbl').textContent = status === 'pre-turn' ? 'Ready' : 'Waiting';
   }
+}
 
-  // Scores
+function renderScores(teams, settings, gs) {
   document.getElementById('g-myteam').textContent = teams[myTeamIdx] ? teams[myTeamIdx].name : 'Your team';
   document.getElementById('scores-grid').innerHTML = teams.map((t, i) => {
     const pct = Math.round(Math.min(100, (t.pos / parseInt(settings.spaces)) * 100));
     return `<div class="score-box ${i === myTeamIdx ? 'me' : ''}">
-      <div class="sname">${i === gs.turn ? '<span class="playing-dot"></span>' : ''}${t.name}</div>
+      <div class="sname">${i === gs.turn ? '<span class="playing-dot"></span>' : ''}${t.name}${t.activeEffect ? ' <span style="font-size:11px">🎲</span>' : ''}</div>
       <div class="sscr">${t.pos}<span style="font-size:13px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400"> / ${settings.spaces}</span></div>
       <div class="prog"><div class="prog-f" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
 }
+
+let prevEvent = null;
+function renderEvent(s) {
+  if (s.activeEvent && !prevEvent) {
+    const teamName = s.teams[s.gs.turn] ? s.teams[s.gs.turn].name : 'A team';
+    showModal('⚡ Event', `${teamName} triggered an event!`, s.activeEvent.text);
+  }
+  if (!s.activeEvent && prevEvent) {
+    dismissModal();
+  }
+  prevEvent = s.activeEvent;
+}
+
+function fitCardText() {
+  const cr = document.getElementById('card-reveal');
+  const el = cr.querySelector('.big-word');
+  if (!el) return;
+  let size = 48;
+  el.style.fontSize = size + 'px';
+  while ((el.scrollHeight > cr.clientHeight - 40 || el.scrollWidth > cr.clientWidth - 52) && size > 16) {
+    size -= 2;
+    el.style.fontSize = size + 'px';
+  }
+}
+
 
 async function getCard() {
   const r = await fetch('/api/new-card', { method: 'POST' });
@@ -396,8 +518,42 @@ async function markCorrect() {
   await fetch('/api/correct', { method: 'POST' });
 }
 
+async function skipCard() {
+  const r = await fetch('/api/skip-card', { method: 'POST' });
+  const d = await r.json();
+  if (d.error) toast(d.error);
+}
+
 async function endTurn() {
   await fetch('/api/end-turn', { method: 'POST' });
+}
+
+async function drawEffect() {
+  const btn = document.getElementById('btn-draw-effect');
+  btn.disabled = true;
+  const r = await fetch('/api/draw-effect', { method: 'POST' });
+  const d = await r.json();
+  if (d.error) { toast(d.error); btn.disabled = false; return; }
+  // Show the effect card in the card-reveal area
+  const cr = document.getElementById('card-reveal');
+  const effectControls = document.getElementById('effect-controls');
+  effectControls.style.display = 'none';
+  if (d.effect) {
+    cr.classList.add('active');
+    cr.innerHTML = `
+      <div class="cat-chip" style="background:#c57aff22;color:#c57aff">Effect</div>
+      <div class="big-word">${d.effect.text}</div>
+    `;
+    requestAnimationFrame(fitCardText);
+  } else {
+    cr.classList.add('active');
+    cr.innerHTML = '<div class="big-word" style="font-size:20px;color:var(--muted)">No effect cards available</div>';
+  }
+  // Hold for 3 seconds, then advance turn
+  setTimeout(async () => {
+    cr.classList.remove('active');
+    await fetch('/api/advance-turn', { method: 'POST' });
+  }, 3000);
 }
 
 function startTimer() {
@@ -431,11 +587,27 @@ async function autoEndTurn() {
   await fetch('/api/end-turn', { method: 'POST' });
 }
 
+function showModal(eyebrow, title, body, actionsHTML) {
+  document.getElementById('modal-eyebrow').textContent = eyebrow;
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  document.getElementById('modal-actions').innerHTML = actionsHTML || '';
+  document.getElementById('modal-backdrop').classList.add('show');
+}
+
+function dismissModal() {
+  document.getElementById('modal-backdrop').classList.remove('show');
+}
+
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
 }
+
+fetch('/api/categories').then(r => r.json()).then(cats => {
+  CATCOL = Object.fromEntries(cats.map(c => [c.name, c.color]));
+});
 </script>
 </body>
 </html>
