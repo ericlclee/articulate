@@ -8,12 +8,13 @@ let gameState = {
   room: null,
   phase: 'lobby', // 'lobby' | 'active' | 'done'
   teams: [],      // { name, pos, connected, activeEffect }
-  settings: { timer: 60, spaces: 49, skips: 1, effectInterval: 0, eventFrequency: 0, eventHidden: true },
+  settings: { timer: 60, spaces: 49, skips: 1, effectFrequency: 0, effectHidden: true, eventFrequency: 0, eventHidden: true },
   gs: { turn: 0, phase: 'waiting', turnScore: 0, skipsLeft: 1 }, // gs.phase: 'waiting' | 'playing' | 'between-turns'
   currentCard: null,
   timestamp: null,
   deckSize: 0,
   activeEvent: null,         // { text } — currently displayed event announcement
+  effectTiles: [],           // randomly generated effect tile positions
   eventTiles: [],            // randomly generated event tile positions
   eventTilesUsed: []         // positions where events have already been triggered
 };
@@ -50,20 +51,37 @@ function getCat(pos) {
   return cats[((pos - 1) % cats.length + cats.length) % cats.length];
 }
 
-function drawCardForPos(pos) {
-  const cat = getCat(pos);
+function drawFromCat(cat) {
   const catCards = cards.filter(c => c.cat === cat);
-  if (!catCards.length) return drawCard(); // fallback if category has no cards
+  if (!catCards.length) return null;
   if (!seenCards[cat]) seenCards[cat] = new Set();
-  // Refill from unseen cards; if all seen, reset and use full set
   if (!catDecks[cat] || !catDecks[cat].length) {
     const unseen = catCards.filter(c => !seenCards[cat].has(c.word));
-    if (!unseen.length) return null; // all cards in this category exhausted
+    if (!unseen.length) return null;
     catDecks[cat] = shuffle(unseen);
   }
   const card = catDecks[cat].pop();
   seenCards[cat].add(card.word);
   return card;
+}
+
+function drawCardForPos(pos) {
+  const cat = getCat(pos);
+  const card = drawFromCat(cat);
+  if (card) return card;
+  // Fallback: draw from the category with the most unseen cards
+  const cats = getCategories().map(c => c.name).filter(c => c !== cat);
+  const ranked = cats.map(c => {
+    if (!seenCards[c]) seenCards[c] = new Set();
+    const unseen = cards.filter(cd => cd.cat === c && !seenCards[c].has(cd.word)).length;
+    const inDeck = (catDecks[c] && catDecks[c].length) || 0;
+    return { cat: c, remaining: unseen + inDeck };
+  }).filter(c => c.remaining > 0).sort((a, b) => b.remaining - a.remaining);
+  for (const r of ranked) {
+    const fallback = drawFromCat(r.cat);
+    if (fallback) return fallback;
+  }
+  return null;
 }
 
 function resetCatDecks() {
@@ -104,21 +122,42 @@ function setTeamStatuses() {
   });
 }
 
-// Generate random event tile positions based on frequency (1-10).
-// Higher frequency = more tiles. Each eligible tile has a (frequency * 5)% chance.
+// Generate random tile positions using gap sampling.
+// frequency (1-10) controls density via mean gap between tiles.
+// freq 1 → ~15% of tiles, freq 5 → ~35%, freq 10 → ~60%
+// excludeSet: positions to avoid (e.g. effect tiles excluded from event generation)
+function generateRandomTiles(frequency, excludeSet) {
+  if (frequency <= 0) return [];
+  const spaces = parseInt(gameState.settings.spaces);
+  // Eligible positions: 2 through spaces-1 (skip start and win)
+  const eligible = [];
+  for (let pos = 2; pos < spaces; pos++) {
+    if (excludeSet && excludeSet.has(pos)) continue;
+    eligible.push(pos);
+  }
+  if (!eligible.length) return [];
+  // Target count based on frequency: freq 1 → ~15%, freq 10 → ~60%
+  const pct = 0.1 + frequency * 0.05;
+  const target = Math.max(1, Math.round(eligible.length * pct));
+  // Randomly sample target positions
+  const shuffled = shuffle(eligible);
+  return shuffled.slice(0, target).sort((a, b) => a - b);
+}
+
+function generateEffectTiles() {
+  const freq = parseInt(gameState.settings.effectFrequency) || 0;
+  gameState.effectTiles = generateRandomTiles(freq, null);
+}
+
 function generateEventTiles() {
   const freq = parseInt(gameState.settings.eventFrequency) || 0;
-  if (freq <= 0) { gameState.eventTiles = []; return; }
-  const spaces = parseInt(gameState.settings.spaces);
-  const effectInterval = parseInt(gameState.settings.effectInterval) || 0;
-  const chance = freq * 0.05; // freq 1 = 5%, freq 5 = 25%, freq 10 = 50%
-  const tiles = [];
-  for (let pos = 2; pos < spaces; pos++) {
-    // Skip effect tiles
-    if (effectInterval > 0 && pos % effectInterval === 0) continue;
-    if (Math.random() < chance) tiles.push(pos);
-  }
-  gameState.eventTiles = tiles;
+  // Exclude effect tiles so they don't overlap
+  const excludeSet = new Set(gameState.effectTiles);
+  gameState.eventTiles = generateRandomTiles(freq, excludeSet);
+}
+
+function isEffectTile(pos) {
+  return gameState.effectTiles.includes(pos);
 }
 
 function isEventTile(pos) {
@@ -175,11 +214,7 @@ function json(res, data, status = 200) {
   res.end(JSON.stringify(data));
 }
 
-function drawCard() {
-  if (!deck.length) deck = shuffle(cards);
-  if (!deck.length) return null;
-  return deck.pop();
-}
+
 
 function drawEffect() {
   if (!effectDeck.length) {
@@ -300,6 +335,7 @@ const server = http.createServer(async (req, res) => {
     effectDeck = shuffle(effectCards); seenEffects.clear();
     eventDeck = shuffle(eventCards); seenEvents.clear();
     eventTilesUsed = new Set();
+    generateEffectTiles();
     generateEventTiles();
     turnHistory = [];
     pushState();
@@ -371,8 +407,7 @@ const server = http.createServer(async (req, res) => {
     gameState.timestamp = null;
 
     // Check: did team land on an effect tile?
-    const effectInterval = parseInt(gameState.settings.effectInterval) || 0;
-    if (effectInterval > 0 && gameState.teams[t].pos % effectInterval === 0) {
+    if (isEffectTile(gameState.teams[t].pos)) {
       gameState.teams[t].activeEffect = null; // clear any existing effect before assigning new one
       gameState.teams[t].pendingEffect = true;
       pushState();
@@ -469,10 +504,12 @@ const server = http.createServer(async (req, res) => {
     if (body.timer) gameState.settings.timer = parseInt(body.timer);
     if (body.spaces) gameState.settings.spaces = parseInt(body.spaces);
     if (body.skips !== undefined) gameState.settings.skips = parseInt(body.skips);
-    if (body.effectInterval !== undefined) gameState.settings.effectInterval = parseInt(body.effectInterval);
+    if (body.effectFrequency !== undefined) gameState.settings.effectFrequency = Math.max(0, Math.min(10, parseInt(body.effectFrequency) || 0));
+    if (body.effectHidden !== undefined) gameState.settings.effectHidden = body.effectHidden === true || body.effectHidden === 'true';
     if (body.eventFrequency !== undefined) gameState.settings.eventFrequency = Math.max(0, Math.min(10, parseInt(body.eventFrequency) || 0));
     if (body.eventHidden !== undefined) gameState.settings.eventHidden = body.eventHidden === true || body.eventHidden === 'true';
-    if (body.eventFrequency !== undefined || body.spaces !== undefined) {
+    if (body.effectFrequency !== undefined || body.eventFrequency !== undefined || body.spaces !== undefined) {
+      generateEffectTiles();
       eventTilesUsed = new Set();
       generateEventTiles();
     }
@@ -571,6 +608,7 @@ const server = http.createServer(async (req, res) => {
     effectDeck = shuffle(effectCards); seenEffects.clear();
     eventDeck = shuffle(eventCards); seenEvents.clear();
     eventTilesUsed = new Set();
+    generateEffectTiles();
     generateEventTiles();
     turnHistory = [];
     pushState();
